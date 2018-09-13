@@ -3,6 +3,9 @@
 * SequencerFactory<T> - create a validator that will check if expected inputs match created artifacts  
 * Write tests
 * Write logs messages
+* For now the only way to define Sequence is to provide it's class. There should be a way to provide just an instance (then there is no need to create a new one from class definition).
+  Create a SequenceDefinition class (with method "fromClass" and "fromInstance") that will encapsulate a sequence class or instance.
+  
 
 # Maybe
 * change name of a Sequence to Step  

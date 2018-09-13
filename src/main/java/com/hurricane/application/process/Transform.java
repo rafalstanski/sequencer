@@ -8,10 +8,13 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
+import static com.hurricane.application.process.SampleProcessArtifacts.NAME;
+import static com.hurricane.application.process.SampleProcessArtifacts.PERSON;
+
 public class Transform implements Sequence {
     @Process
-    @Artifact("person")
-    public Person transform(@Artifact("name") final String name) {
+    @Artifact(PERSON)
+    public Person transform(@Artifact(NAME) final String name) {
         System.out.println("transforming: " + name);
         final String nameToSplit = Objects.toString(name, name);
         final String[] parts = StringUtils.split(nameToSplit, ' ');

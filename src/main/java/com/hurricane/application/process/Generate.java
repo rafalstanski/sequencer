@@ -6,10 +6,13 @@ import com.hurricane.components.sequencer.annotations.Process;
 import com.hurricane.components.sequencer.sequence.Sequence;
 import org.apache.commons.lang3.RandomUtils;
 
+import static com.hurricane.application.process.SampleProcessArtifacts.PERSON;
+import static com.hurricane.application.process.SampleProcessArtifacts.REFERENCE_ID;
+
 public class Generate implements Sequence {
     @Process
-    @Artifact("referenceId")
-    public Integer generate(@Artifact("person") final Person person) {
+    @Artifact(REFERENCE_ID)
+    public Integer generate(@Artifact(PERSON) final Person person) {
         System.out.println("generate: " + person);
         return RandomUtils.nextInt();
     }
