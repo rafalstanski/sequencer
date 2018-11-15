@@ -1,7 +1,7 @@
 package com.hurricane.components.sequencer;
 
-import com.hurricane.components.sequencer.sequence.Sequence;
-import com.hurricane.components.sequencer.sequence.SequenceFactory;
+import com.hurricane.components.sequencer.step.Step;
+import com.hurricane.components.sequencer.step.StepFactory;
 
 import java.util.ArrayList;
 
@@ -20,18 +20,18 @@ public class SequencerBuilder<T> {
         return new SequencerBuilder<>(Initializer.non());
     }
 
-    public SequencerBuilder<T> start(final Class<? extends Sequence> startSequence) {
-        definition.setSequencesClasses(new ArrayList<>());
-        return next(startSequence);
+    public SequencerBuilder<T> start(final Class<? extends Step> startStep) {
+        definition.setStepsClasses(new ArrayList<>());
+        return next(startStep);
     }
 
-    public SequencerBuilder<T> next(final Class<? extends Sequence> nextSequence) {
-        definition.getSequencesClasses().add(nextSequence);
+    public SequencerBuilder<T> next(final Class<? extends Step> nextStep) {
+        definition.getStepsClasses().add(nextStep);
         return this;
     }
 
-    public SequencerBuilder<T> createBy(final SequenceFactory factory) {
-        definition.setSequenceFactory(factory);
+    public SequencerBuilder<T> createBy(final StepFactory factory) {
+        definition.setStepFactory(factory);
         return this;
     }
 

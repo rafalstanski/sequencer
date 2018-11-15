@@ -10,8 +10,8 @@ import java.util.Map;
 @Data
 public class SequencerResult {
     private final Map<String, Object> artifacts;
-    private final List<String> usedSequences;
-    private final List<SequenceInvokeError> errors;
+    private final List<String> usedSteps;
+    private final List<StepInvokeError> errors;
 
     public boolean success() {
         return errors.isEmpty();

@@ -1,21 +1,21 @@
 package com.hurricane.components.sequencer;
 
 import com.hurricane.components.sequencer.invoker.InvokerContext;
-import com.hurricane.components.sequencer.invoker.SequenceInvoker;
+import com.hurricane.components.sequencer.invoker.StepInvoker;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 @RequiredArgsConstructor(staticName = "of")
 public class Sequencer<T> {
-    private final List<SequenceInvoker> invokers;
+    private final List<StepInvoker> invokers;
     private final ExceptionHandler exceptionHandler;
 
     public SequencerResult start(T initialValue) {
         final InvokerContext context = InvokerContext.of(initialValue);
         final SequenceRepeater repeater = SequenceRepeater.basedOn(invokers, exceptionHandler);
         do {
-            final SequenceInvoker invoker = repeater.provide();
+            final StepInvoker invoker = repeater.provide();
             try {
                 invoker.invoke(context);
             } catch (RuntimeException e) {
@@ -29,7 +29,7 @@ public class Sequencer<T> {
         return SequencerResult.builder()
                 .artifacts(context.getArtifacts())
                 .errors(repeater.getErrors())
-                .usedSequences(repeater.getProvidedInvokersNames())
+                .usedSteps(repeater.getProvidedInvokersNames())
                 .build();
     }
 }

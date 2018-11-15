@@ -4,7 +4,7 @@ import com.hurricane.components.sequencer.invoker.builder.ProducerDefinition;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(staticName = "of")
-public class InitialSequenceInvoker implements SequenceInvoker {
+public class InitialStepInvoker implements StepInvoker {
     private final ProducerDefinition producerDefinition;
 
     @Override

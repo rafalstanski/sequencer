@@ -1,10 +1,10 @@
-package com.hurricane.components.sequencer.sequence;
+package com.hurricane.components.sequencer.step;
 
-public class InstanceSequenceFactory implements SequenceFactory {
+public class InstanceStepFactory implements StepFactory {
     @Override
-    public Sequence create(Class<? extends Sequence> sequenceClass) {
+    public Step create(Class<? extends Step> stepClass) {
         try {
-            return sequenceClass.newInstance();
+            return stepClass.newInstance();
         } catch (InstantiationException e) {
             //TODO throw appropriate exception
             throw new RuntimeException(e);
