@@ -6,7 +6,6 @@ buildscript {
 }
 
 plugins {
-    id 'org.springframework.boot' version '1.5.10.RELEASE'
 	id 'java'
 	id 'groovy' //for spock unit tests
 }
@@ -15,21 +14,15 @@ repositories {
     mavenCentral()
 }
 
-group 'pl.rstanski.projects'
+group 'com.hurricane.components'
 version '1.0-SNAPSHOT'
 sourceCompatibility = 1.8 //by default targetCompatibility = sourceCompatibility
 
 dependencies {
-    compile 'org.springframework.boot:spring-boot-starter-web'
-
     //helpers
-    compileOnly 'org.projectlombok:lombok:1.16.18'
-    compile 'ma.glasnost.orika:orika-core:1.4.0'
-    compile 'net.rakugakibox.spring.boot:orika-spring-boot-starter:1.5.0'
-    compile 'org.apache.commons:commons-collections4:4.1'
-    compile 'org.apache.commons:commons-lang3:3.7'
-    compile 'commons-io:commons-io:2.6'
+    compileOnly 'org.projectlombok:lombok:1.18.4'
+    compile 'org.apache.commons:commons-lang3:3.8.1'
 
 	//Unit testing
-    testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'	
+    testCompile 'org.spockframework:spock-core:1.2-groovy-2.5'
 }
