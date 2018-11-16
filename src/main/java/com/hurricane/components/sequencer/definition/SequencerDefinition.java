@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class SequencerDefinition<T> {
     private final Initial<T> initial;
-    private final List<Class<? extends Step>> stepsClasses;
+    private final List<Class<? extends Step>> stepsDefinitions;
     private final StepFactory stepFactory;
     private final ExceptionHandler exceptionHandler;
 }

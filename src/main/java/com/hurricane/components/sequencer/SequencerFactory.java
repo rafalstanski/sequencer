@@ -23,7 +23,7 @@ class SequencerFactory<T> {
     private List<StepInvoker> createInvokers(final SequencerDefinition<T> definition) {
         final List<StepInvoker> invokers = new ArrayList<>();
         addInitialStepIfNecessary(definition, invokers);
-        for (final Class<? extends Step> stepClass : definition.getStepsClasses()) {
+        for (final Class<? extends Step> stepClass : definition.getStepsDefinitions()) {
             final Step step = definition.getStepFactory().create(stepClass);
             final StepInvoker invoker = invokerBuilder.build(step);
             invokers.add(invoker);
