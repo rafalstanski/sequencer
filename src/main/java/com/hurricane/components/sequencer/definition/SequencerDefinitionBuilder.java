@@ -23,7 +23,7 @@ public class SequencerDefinitionBuilder<T> {
     }
 
     public void step(final Class<? extends Step> stepDefinition) {
-        Validate.notNull(initial, "Step definition shouldn't be null");
+        Validate.notNull(stepDefinition, "Step definition shouldn't be null");
         this.stepsDefinition.add(stepDefinition);
     }
 
