@@ -5,7 +5,8 @@
 * Write logs messages
 * For now the only way to define step is to provide it's class. There should be a way to provide just an instance (then there is no need to create a new one from class definition).
   Create a StepDefinition class (with method "fromClass" and "fromInstance") that will encapsulate a step class or instance.
-  
+* ConsumerDefinition and ProducerDefinition - it's no longer a definition. It's a solid thing. Should be renamed to something like ContextConsumer    
+* In BaseStepInvoker - change 'definition' variable to more suitable name  
 
 # Maybe
 * listeners - before and after Step execution  
