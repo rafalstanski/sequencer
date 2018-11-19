@@ -15,7 +15,7 @@ public class Initial<T> {
         return new Initial<>(StringUtils.EMPTY, Void.class);
     }
 
-    public static <T> Initial<T> artifact(final String artifactName, Class<T> type) {
+    public static <T> Initial<T> artifact(final String artifactName, final Class<T> type) {
         return new Initial<>(artifactName, type);
     }
 

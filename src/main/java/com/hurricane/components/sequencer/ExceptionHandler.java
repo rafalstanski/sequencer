@@ -1,6 +1,6 @@
 package com.hurricane.components.sequencer;
 
 public interface ExceptionHandler {
-    Reaction handle(RuntimeException Exception);
+    Reaction handle(RuntimeException exception);
 }
 

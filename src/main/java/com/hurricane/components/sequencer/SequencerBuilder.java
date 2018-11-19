@@ -1,18 +1,21 @@
 package com.hurricane.components.sequencer;
 
+import com.hurricane.components.sequencer.definition.SequencerDefinition;
+import com.hurricane.components.sequencer.definition.SequencerDefinitionBuilder;
 import com.hurricane.components.sequencer.step.Step;
 import com.hurricane.components.sequencer.step.StepFactory;
-
-import java.util.ArrayList;
+import org.apache.commons.lang3.Validate;
 
 public class SequencerBuilder<T> {
-    private final SequencerDefinition<T> definition;
+    private final SequencerDefinitionBuilder<T> definitionBuilder = new SequencerDefinitionBuilder<>();
+    private final SequencerFactory<T> sequencerFactory = new SequencerFactory<>();
 
     private SequencerBuilder(final Initial<T> initial) {
-        definition = SequencerDefinition.of(initial);
+        definitionBuilder.initial(initial);
     }
 
     public static <I> SequencerBuilder<I> initializedBy(Initial<I> initial) {
+        Validate.notNull(initial, "initial parameter shouldn't be null. Use 'standalone method' instead");
         return new SequencerBuilder<>(initial);
     }
 
@@ -21,37 +24,27 @@ public class SequencerBuilder<T> {
     }
 
     public SequencerBuilder<T> start(final Class<? extends Step> startStep) {
-        definition.setStepsClasses(new ArrayList<>());
-        return next(startStep);
+        definitionBuilder.step(startStep);
+        return this;
     }
 
     public SequencerBuilder<T> next(final Class<? extends Step> nextStep) {
-        definition.getStepsClasses().add(nextStep);
+        definitionBuilder.step(nextStep);
         return this;
     }
 
     public SequencerBuilder<T> createBy(final StepFactory factory) {
-        definition.setStepFactory(factory);
-        return this;
-    }
-
-    public SequencerBuilder<T> ignoreWhenError() {
-        definition.setExceptionHandler(ExceptionHandlers.ignore());
-        return this;
-    }
-
-    public SequencerBuilder<T> stopWhenError() {
-        definition.setExceptionHandler(ExceptionHandlers.interrupt());
+        definitionBuilder.stepFactory(factory);
         return this;
     }
 
     public SequencerBuilder<T> whenError(final ExceptionHandler exceptionHandler) {
-        definition.setExceptionHandler(exceptionHandler);
+        definitionBuilder.exceptionHandler(exceptionHandler);
         return this;
     }
 
     public Sequencer<T> build() {
-        final SequencerFactory<T> sequencerFactory = new SequencerFactory<>();
-        return sequencerFactory.create(definition);
+        final SequencerDefinition<T> sequencerDefinition = definitionBuilder.build();
+        return sequencerFactory.create(sequencerDefinition);
     }
 }
