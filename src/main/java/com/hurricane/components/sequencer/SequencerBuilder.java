@@ -23,13 +23,23 @@ public class SequencerBuilder<T> {
         return new SequencerBuilder<>(Initializer.non());
     }
 
-    public SequencerBuilder<T> start(final Class<? extends Step> startStep) {
-        definitionBuilder.step(startStep);
+    public SequencerBuilder<T> start(final Class<? extends Step> startStepClass) {
+        definitionBuilder.step(startStepClass);
         return this;
     }
 
-    public SequencerBuilder<T> next(final Class<? extends Step> nextStep) {
-        definitionBuilder.step(nextStep);
+    public SequencerBuilder<T> start(final Step startStepInstance) {
+        definitionBuilder.step(startStepInstance);
+        return this;
+    }
+
+    public SequencerBuilder<T> next(final Class<? extends Step> nextStepClass) {
+        definitionBuilder.step(nextStepClass);
+        return this;
+    }
+
+    public SequencerBuilder<T> next(final Step nextStepInstance) {
+        definitionBuilder.step(nextStepInstance);
         return this;
     }
 
