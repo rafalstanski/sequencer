@@ -2,9 +2,17 @@ package com.hurricane.components.sequencer.step;
 
 public class InstanceStepFactory implements StepFactory {
     @Override
-    public Step create(Class<? extends Step> stepDefinition) {
+    public Step create(final StepDefinition stepDefinition) {
+        if (stepDefinition.isInstanceProvided()) {
+            return stepDefinition.getInstance();
+        } else {
+            return createInstanceFromClass(stepDefinition);
+        }
+    }
+
+    private Step createInstanceFromClass(final StepDefinition stepDefinition) {
         try {
-            return stepDefinition.newInstance();
+            return stepDefinition.getInstanceClass().newInstance();
         } catch (InstantiationException e) {
             //TODO throw appropriate exception
             throw new RuntimeException(e);

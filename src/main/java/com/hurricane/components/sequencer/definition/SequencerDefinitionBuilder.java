@@ -5,6 +5,7 @@ import com.hurricane.components.sequencer.ExceptionHandlers;
 import com.hurricane.components.sequencer.Initial;
 import com.hurricane.components.sequencer.step.InstanceStepFactory;
 import com.hurricane.components.sequencer.step.Step;
+import com.hurricane.components.sequencer.step.StepDefinition;
 import com.hurricane.components.sequencer.step.StepFactory;
 import org.apache.commons.lang3.Validate;
 
@@ -13,7 +14,7 @@ import java.util.List;
 
 public class SequencerDefinitionBuilder<T> {
     private Initial<T> initial;
-    private List<Class<? extends Step>> stepsDefinition = new ArrayList<>();
+    private List<StepDefinition> stepsDefinition = new ArrayList<>();
     private StepFactory stepFactory = new InstanceStepFactory();
     private ExceptionHandler exceptionHandler = ExceptionHandlers.rethrow();
 
@@ -22,9 +23,14 @@ public class SequencerDefinitionBuilder<T> {
         this.initial = initial;
     }
 
-    public void step(final Class<? extends Step> stepDefinition) {
-        Validate.notNull(stepDefinition, "Step definition shouldn't be null");
-        this.stepsDefinition.add(stepDefinition);
+    public void step(final Class<? extends Step> stepClass) {
+        Validate.notNull(stepClass, "Step class shouldn't be null");
+        this.stepsDefinition.add(StepDefinition.fromClass(stepClass));
+    }
+
+    public void step(final Step stepInstance) {
+        Validate.notNull(stepInstance, "Step instance shouldn't be null");
+        this.stepsDefinition.add(StepDefinition.fromInstance(stepInstance));
     }
 
     public void stepFactory(final StepFactory factory) {

@@ -6,6 +6,7 @@ import com.hurricane.components.sequencer.Initial
 import com.hurricane.components.sequencer.Reaction
 import com.hurricane.components.sequencer.step.InstanceStepFactory
 import com.hurricane.components.sequencer.step.Step
+import com.hurricane.components.sequencer.step.StepDefinition
 import com.hurricane.components.sequencer.step.StepFactory
 import spock.lang.Specification
 
@@ -43,8 +44,7 @@ class SequencerDefinitionBuilderSpec extends Specification {
 
     def "should set custom exceptionHandler when provided"() {
         setup:
-            def builder = new SequencerDefinitionBuilder()
-            builder.initial(Initial.non())
+            def builder = sequencerDefinitionBuilderWithInitialNon()
             def handler = { RuntimeException exception -> return Reaction.IGNORE } as ExceptionHandler
             builder.exceptionHandler(handler)
         when:
@@ -55,8 +55,7 @@ class SequencerDefinitionBuilderSpec extends Specification {
 
     def "should set custom stepFactory when provided"() {
         setup:
-            def builder = new SequencerDefinitionBuilder()
-            builder.initial(Initial.non())
+            def builder = sequencerDefinitionBuilderWithInitialNon()
             def factory = { stepDefinition -> return new Step() {} } as StepFactory
             builder.stepFactory(factory)
         when:
@@ -65,36 +64,57 @@ class SequencerDefinitionBuilderSpec extends Specification {
             definition.stepFactory == factory
     }
 
-    def "should add steps definition when provided"() {
+    def "should add steps definition when step classes provided"() {
         setup:
-            def builder = new SequencerDefinitionBuilder()
-            builder.initial(Initial.non())
-            def step1 = (new Step() {}).getClass() as Class<? extends Step>
-            def step2 = (new Step() {}).getClass() as Class<? extends Step>
-            builder.step(step1)
-            builder.step(step2)
+            def builder = sequencerDefinitionBuilderWithInitialNon()
+            def stepClass1 = (new Step() {}).getClass() as Class<? extends Step>
+            def stepClass2 = (new Step() {}).getClass() as Class<? extends Step>
+            builder.step(stepClass1)
+            builder.step(stepClass2)
         when:
             def definition = builder.build()
         then:
             definition.stepsDefinitions.size() == 2
-            definition.stepsDefinitions == [step1, step2]
+            definition.stepsDefinitions == [StepDefinition.fromClass(stepClass1), StepDefinition.fromClass(stepClass2)]
     }
 
-
-    def "should fail when trying to set NULL step"() {
+    def "should add steps definition when step instances provided"() {
         setup:
-            def builder = new SequencerDefinitionBuilder()
-            builder.initial(Initial.non())
+        def builder = sequencerDefinitionBuilderWithInitialNon()
+        def stepInstance1 = new Step() {}
+        def stepInstance2 = new Step() {}
+        builder.step(stepInstance1)
+        builder.step(stepInstance2)
         when:
-            builder.step(null)
+        def definition = builder.build()
+        then:
+        definition.stepsDefinitions.size() == 2
+        definition.stepsDefinitions == [StepDefinition.fromInstance(stepInstance1), StepDefinition.fromInstance(stepInstance2)]
+    }
+
+    def "should fail when trying to set NULL step class"() {
+        setup:
+            def builder = sequencerDefinitionBuilderWithInitialNon()
+            def nullStep = null as Step
+        when:
+            builder.step(nullStep)
+        then:
+            thrown NullPointerException
+    }
+
+    def "should fail when trying to set NULL step instance"() {
+        setup:
+            def builder = sequencerDefinitionBuilderWithInitialNon()
+            def nullStep = null as Class<? extends Step>
+        when:
+            builder.step(nullStep)
         then:
             thrown NullPointerException
     }
 
     def "should fail when trying to set NULL step factory"() {
         setup:
-            def builder = new SequencerDefinitionBuilder()
-            builder.initial(Initial.non())
+            def builder = sequencerDefinitionBuilderWithInitialNon()
         when:
             builder.stepFactory(null)
         then:
@@ -104,11 +124,16 @@ class SequencerDefinitionBuilderSpec extends Specification {
 
     def "should fail when trying to set NULL exception handler"() {
         setup:
-            def builder = new SequencerDefinitionBuilder()
-            builder.initial(Initial.non())
+            def builder = sequencerDefinitionBuilderWithInitialNon()
         when:
             builder.exceptionHandler(null)
         then:
             thrown NullPointerException
+    }
+
+    private def sequencerDefinitionBuilderWithInitialNon() {
+        final def builder = new SequencerDefinitionBuilder()
+        builder.initial(Initial.non())
+        return builder
     }
 }
