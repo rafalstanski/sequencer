@@ -20,7 +20,7 @@ public class Sequencer<T> {
             final StepInvoker invoker = repeater.provide();
             try {
                 invoker.invoke(context);
-            } catch (RuntimeException e) {
+            } catch (final RuntimeException e) {
                 repeater.react(e);
             }
         } while (repeater.shouldContinue());

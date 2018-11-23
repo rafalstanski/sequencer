@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+//TODO change name
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 class SequenceRepeater {
     private final Iterator<StepInvoker> invokerIterator;

@@ -1,9 +1,9 @@
 # Thinks that should be done
 * SequencerFactory<T> - create a validator that will check if expected inputs match created artifacts  
-* Write tests
-* Write logs messages
+* Write tests  
+* Write logs messages  
 * Provide a way to give step a name (NamedStep, if not then from class name)  
-* clear all TODO
+* clear all TODO  
 
 # Maybe
 * listeners - before and after Step execution  
