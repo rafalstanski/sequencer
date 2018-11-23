@@ -9,7 +9,7 @@ import java.util.Map;
 @Builder
 @Data
 public class SequencerResult {
-    private final Map<String, Object> artifacts;
+    private final Map<String, Artifact> artifacts;
     private final List<String> usedSteps;
     private final List<StepInvokeError> errors;
 
