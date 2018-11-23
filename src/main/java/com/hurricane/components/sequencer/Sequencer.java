@@ -10,15 +10,17 @@ import java.util.List;
 public class Sequencer<T> {
     private final List<StepInvoker> invokers;
     private final ExceptionHandler exceptionHandler;
+    private final ContextInitalPopulator<T> populator;
 
     public SequencerResult start(T initialValue) {
-        final InvokerContext context = InvokerContext.of(initialValue);
+        final InvokerContext context = new InvokerContext();
+        populator.populate(context, initialValue);
         final SequenceRepeater repeater = SequenceRepeater.basedOn(invokers, exceptionHandler);
         do {
             final StepInvoker invoker = repeater.provide();
             try {
                 invoker.invoke(context);
-            } catch (RuntimeException e) {
+            } catch (final RuntimeException e) {
                 repeater.react(e);
             }
         } while (repeater.shouldContinue());

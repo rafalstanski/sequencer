@@ -1,20 +1,21 @@
 package com.hurricane.components.sequencer.invoker;
 
+import com.hurricane.components.sequencer.Artifact;
 import lombok.Data;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Data(staticConstructor = "of")
+@Data
 public class InvokerContext {
-    private final Object initial;
-    private Map<String, Object> artifacts = new HashMap<>();
+    //TODO this should not be visible outside class
+    private final Map<String, Artifact> artifacts = new HashMap<>();
 
-    public Object get(final String artifactName) {
+    public Artifact take(final String artifactName) {
         return artifacts.get(artifactName);
     }
 
-    public void put(final String artifactName, final Object value) {
-        artifacts.put(artifactName, value);
+    public void store(final Artifact artifact) {
+        artifacts.put(artifact.name(), artifact);
     }
 }
