@@ -35,7 +35,7 @@ class ConsumedArtifactsFinder {
             return parameter.getName();
         } else {
             //TODO give correct exception
-            throw new IllegalStateException("You need to compile with -parameters option or use @Artifact");
+            throw new IllegalStateException("You need to compile with -parameters option or use @Artifact annotation");
         }
     }
 }

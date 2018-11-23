@@ -16,8 +16,8 @@ public class ProcessMethodMissingException extends SequencerException {
         return new ProcessMethodMissingException(createNotFoundMessage(step));
     }
 
-    public static ProcessMethodMissingException tooMany(final Step step, final Collection<Method> processingMethods) {
-        return new ProcessMethodMissingException(createTooManyMessage(step, processingMethods));
+    public static ProcessMethodMissingException tooMany(final Step step, final Collection<Method> processMethods) {
+        return new ProcessMethodMissingException(createTooManyMessage(step, processMethods));
     }
 
     private static String createNotFoundMessage(final Step step) {
@@ -27,15 +27,15 @@ public class ProcessMethodMissingException extends SequencerException {
                 Process.class.getName();
     }
 
-    private static String createTooManyMessage(final Step step, final Collection<Method> processingMethods) {
-        final String methodNames = processingMethods.stream()
+    private static String createTooManyMessage(final Step step, final Collection<Method> processMethods) {
+        final String methodNames = processMethods.stream()
                 .map(Method::getName)
                 .collect(Collectors.joining(", "));
         return "There is to many methods within Step class /" +
                 step.getClass().getCanonicalName() +
-                "/annotated with @" +
+                "/ annotated with @" +
                 Process.class.getName() +
-                "There need to be only one. Found methods: " +
+                ". There need to be only one. Found methods: " +
                 methodNames;
     }
 }
