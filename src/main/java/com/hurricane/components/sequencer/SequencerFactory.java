@@ -5,9 +5,11 @@ import com.hurricane.components.sequencer.invoker.StepInvoker;
 import com.hurricane.components.sequencer.invoker.builder.StepInvokerBuilder;
 import com.hurricane.components.sequencer.step.Step;
 import com.hurricane.components.sequencer.step.StepDefinition;
+import com.hurricane.components.sequencer.step.StepFactory;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 class SequencerFactory<T> {
     private final StepInvokerBuilder invokerBuilder = new StepInvokerBuilder();
@@ -18,12 +20,13 @@ class SequencerFactory<T> {
     }
 
     private List<StepInvoker> createInvokers(final SequencerDefinition<T> definition) {
-        final List<StepInvoker> invokers = new ArrayList<>();
-        for (final StepDefinition stepDefinition : definition.getStepsDefinitions()) {
-            final Step step = definition.getStepFactory().create(stepDefinition);
-            final StepInvoker invoker = invokerBuilder.build(step);
-            invokers.add(invoker);
-        }
-        return invokers;
+        return definition.getStepsDefinitions().stream()
+                .map(stepDefinition -> createInvoker(stepDefinition, definition.getStepFactory()))
+                .collect(toList());
+    }
+
+    private StepInvoker createInvoker(final StepDefinition stepDefinition, final StepFactory stepFactory) {
+        final Step step = stepFactory.create(stepDefinition);
+        return invokerBuilder.build(step);
     }
 }

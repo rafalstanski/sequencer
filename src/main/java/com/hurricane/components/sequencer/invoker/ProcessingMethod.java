@@ -22,7 +22,7 @@ public class ProcessingMethod {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
             //TODO throw appropriate exception
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getTargetException());
         }
     }
 
