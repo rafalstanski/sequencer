@@ -10,28 +10,26 @@ import java.util.List;
 public class Sequencer<T> {
     private final List<StepInvoker> invokers;
     private final ExceptionHandler exceptionHandler;
-    private final ContextInitalPopulator<T> populator;
+    private final ContextInitalPopulator populator;
 
     public SequencerResult start(T initialValue) {
-        final InvokerContext context = new InvokerContext();
-        populator.populate(context, initialValue);
-        final SequenceRepeater repeater = SequenceRepeater.basedOn(invokers, exceptionHandler);
-        do {
-            final StepInvoker invoker = repeater.provide();
-            try {
-                invoker.invoke(context);
-            } catch (final RuntimeException e) {
-                repeater.react(e);
-            }
-        } while (repeater.shouldContinue());
-        return createResult(repeater, context);
+        final InvokerContext context = createContext(initialValue);
+        final InvokersRunner runner = InvokersRunner.basedOn(invokers, exceptionHandler);
+        runner.run(context);
+        return createResult(runner, context);
     }
 
-    private SequencerResult createResult(final SequenceRepeater repeater, final InvokerContext context) {
+    private InvokerContext createContext(final Object initialValue) {
+        final InvokerContext context = new InvokerContext();
+        populator.populate(context, initialValue);
+        return context;
+    }
+
+    private SequencerResult createResult(final InvokersRunner runner, final InvokerContext context) {
         return SequencerResult.builder()
-                .artifacts(context.getArtifacts())
-                .errors(repeater.getErrors())
-                .usedSteps(repeater.getProvidedInvokersNames())
+                .artifacts(context.getArtifacts().values())
+                .errors(runner.getErrors())
+                .executedSteps(runner.getExecutedStepsNames())
                 .build();
     }
 }
