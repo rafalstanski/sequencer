@@ -5,5 +5,5 @@ import lombok.Data;
 @Data(staticConstructor = "of")
 public class StepInvokeError {
     private final String stepName;
-    private final RuntimeException exception;
+    private final Throwable cause;
 }

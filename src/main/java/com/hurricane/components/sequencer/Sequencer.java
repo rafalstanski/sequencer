@@ -15,8 +15,7 @@ public class Sequencer<T> {
     public SequencerResult start(T initialValue) {
         final InvokerContext context = createContext(initialValue);
         final InvokersRunner runner = InvokersRunner.basedOn(invokers, exceptionHandler);
-        runner.run(context);
-        return createResult(runner, context);
+        return runner.run(context);
     }
 
     private InvokerContext createContext(final Object initialValue) {
@@ -24,14 +23,4 @@ public class Sequencer<T> {
         populator.populate(context, initialValue);
         return context;
     }
-
-    private SequencerResult createResult(final InvokersRunner runner, final InvokerContext context) {
-        return SequencerResult.builder()
-                .artifacts(context.getArtifacts().values())
-                .errors(runner.getErrors())
-                .executedSteps(runner.getExecutedStepsNames())
-                .build();
-    }
 }
-
-

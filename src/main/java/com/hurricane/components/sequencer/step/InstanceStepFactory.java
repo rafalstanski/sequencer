@@ -13,10 +13,10 @@ public class InstanceStepFactory implements StepFactory {
     private Step createInstanceFromClass(final StepDefinition stepDefinition) {
         try {
             return stepDefinition.getInstanceClass().newInstance();
-        } catch (InstantiationException e) {
+        } catch (final InstantiationException e) {
             //TODO throw appropriate exception
             throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             //TODO throw appropriate exceptions
             throw new RuntimeException(e);
         }

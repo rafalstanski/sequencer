@@ -1,13 +1,8 @@
 package com.hurricane.components.sequencer;
 
 public class ExceptionHandlers {
-    private static final ExceptionHandler RETHROW = invokeError -> Reaction.RETHROW;
     private static final ExceptionHandler IGNORE = invokeError -> Reaction.IGNORE;
     private static final ExceptionHandler INTERRUPT = invokeError -> Reaction.INTERRUPT;
-
-    public static ExceptionHandler rethrow() {
-        return RETHROW;
-    }
 
     public static ExceptionHandler interrupt() {
         return IGNORE;

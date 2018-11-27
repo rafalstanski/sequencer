@@ -1,6 +1,7 @@
 package com.hurricane.components.sequencer.invoker;
 
 import com.hurricane.components.sequencer.Artifact;
+import com.hurricane.components.sequencer.exception.StepInvokeException;
 import com.hurricane.components.sequencer.step.Step;
 import lombok.Data;
 
@@ -17,12 +18,10 @@ public class ProcessingMethod {
         final Object[] values = extractValues(artifacts);
         try {
             return processMethod.invoke(target, values);
-        } catch (IllegalAccessException e) {
-            //TODO throw appropriate exception
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            //TODO throw appropriate exception
-            throw new RuntimeException(e.getTargetException());
+        } catch (final IllegalAccessException e) {
+            throw StepInvokeException.illegalAccess(processMethod, target, e);
+        } catch (final InvocationTargetException e) {
+            throw StepInvokeException.executionError(processMethod, target, e.getTargetException());
         }
     }
 

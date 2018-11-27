@@ -1,10 +1,5 @@
-package com.hurricane.application;
+package com.hurricane.application.process;
 
-import com.hurricane.application.process.Download;
-import com.hurricane.application.process.Generate;
-import com.hurricane.application.process.SampleProcessArtifacts;
-import com.hurricane.application.process.Transform;
-import com.hurricane.application.process.Zipper;
 import com.hurricane.components.sequencer.Sequencer;
 import com.hurricane.components.sequencer.SequencerBuilder;
 import com.hurricane.components.sequencer.SequencerResult;
@@ -25,5 +20,6 @@ public class Main {
         final SequencerResult result = sequencer.start("Rafal Stanski");
         System.out.println("Successful run: " + result.success());
         System.out.println("Artifacts: " + result.getArtifacts());
+        System.out.println("Errors: " + result.getErrors());
     }
 }
