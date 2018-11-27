@@ -14,14 +14,17 @@ public class ProcessingMethod {
     private final Method processMethod;
     private final Step target;
 
-    public Object invoke(final List<Artifact> artifacts) {
+    public InvokeResult invoke(final List<Artifact> artifacts) {
         final Object[] values = extractValues(artifacts);
         try {
-            return processMethod.invoke(target, values);
+            final Object returnValue = processMethod.invoke(target, values);
+            return handleSuccess(returnValue);
         } catch (final IllegalAccessException e) {
-            throw StepInvokeException.illegalAccess(processMethod, target, e);
+            return handleFailure(StepInvokeException.illegalAccess(processMethod, target, e));
         } catch (final InvocationTargetException e) {
-            throw StepInvokeException.executionError(processMethod, target, e.getTargetException());
+            return handleFailure(e.getTargetException());
+        } catch (final Throwable t) {
+            return handleFailure(t);
         }
     }
 
@@ -29,5 +32,22 @@ public class ProcessingMethod {
         return artifacts.stream()
                 .map(Artifact::getValue)
                 .toArray();
+    }
+
+    private InvokeResult handleSuccess(final Object returnValue) {
+        return new Success(returnValue);
+    }
+
+    private InvokeResult handleFailure(final Throwable throwable) {
+        if (nonRecoverable(throwable)) {
+            throw (Error)throwable;
+        } else {
+            return new Failure(throwable);
+        }
+    }
+
+    private boolean nonRecoverable(final Throwable cause) {
+        // inspired by vavr library's Try class. Those exceptions are considered to be fatal/non-recoverable
+        return cause instanceof LinkageError || cause instanceof ThreadDeath || cause instanceof VirtualMachineError;
     }
 }

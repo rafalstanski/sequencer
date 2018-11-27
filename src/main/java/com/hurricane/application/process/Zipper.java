@@ -10,6 +10,6 @@ public class Zipper implements Step {
     @Process
     public void zip(@Artifact(REFERENCE_ID) final Integer referenceId) {
         System.out.println("zip: " + referenceId);
-        throw new StackOverflowError("stack");
+        throw new RuntimeException("zipper exception");
     }
 }

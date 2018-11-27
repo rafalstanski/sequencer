@@ -10,22 +10,12 @@ public class StepInvokeException extends SequencerException {
         super(message, cause);
     }
 
-    public static StepInvokeException executionError(Method processMethod, Step target, final Throwable cause) {
-        return new StepInvokeException(createExecutionErrorMessage(processMethod, target, cause), cause);
-    }
-
     public static StepInvokeException illegalAccess(final Method processMethod, final Step target, final IllegalAccessException e) {
         return new StepInvokeException(createIllegalAccessMessage(processMethod, target), e);
-
     }
 
-    private static String createExecutionErrorMessage(final Method processMethod, final Step target, final Throwable cause) {
-        return "There was an error while executing step " +
-                "/" + target.getClass() + "/ " +
-                "Exception occurred when invoking method: " +
-                processMethod.toGenericString() + ". " +
-                "Exception that stopped execution: " +
-                cause.getClass();
+    public static StepInvokeException exceptionWhileExecution(final Throwable cause) {
+        return new StepInvokeException("Unable to return value because there was exception while invoking step's process method", cause);
     }
 
     private static String createIllegalAccessMessage(final Method processMethod, final Step target) {

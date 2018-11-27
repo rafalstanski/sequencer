@@ -24,7 +24,8 @@ public class ProcessMethodMissingException extends SequencerException {
         return "Unable to find process method within Step class /" +
                 step.getClass().getCanonicalName() +
                 "/. Remember that method need to be annotated with @" +
-                Process.class.getName();
+                Process.class.getName() + " " +
+                "and should be public";
     }
 
     private static String createTooManyMessage(final Step step, final Collection<Method> processMethods) {

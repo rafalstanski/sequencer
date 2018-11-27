@@ -1,6 +1,7 @@
 package com.hurricane.components.sequencer;
 
 import com.hurricane.components.sequencer.exception.ErrorReactionException;
+import com.hurricane.components.sequencer.invoker.InvokeResult;
 import com.hurricane.components.sequencer.invoker.InvokerContext;
 import com.hurricane.components.sequencer.invoker.StepInvoker;
 import lombok.RequiredArgsConstructor;
@@ -30,31 +31,17 @@ class InvokersRunner {
 
     private void executeSingleInvoker(final StepInvoker invoker, final InvokerContext context) {
         executedStepsNames.add(invoker.getName());
-        try {
-            invoker.invoke(context);
-        } catch (final Throwable e) {
-            react(invoker, e);
+        final InvokeResult invokeResult = invoker.invoke(context);
+        if (invokeResult.isFailure()) {
+            reactToFailure(invoker, invokeResult);
         }
     }
 
-    private boolean shouldContinue(final Iterator<StepInvoker> invokerIterator) {
-        return shouldContinue && invokerIterator.hasNext();
-    }
-
-    private void react(final StepInvoker invoker, final Throwable cause) {
-        if (nonRecoverable(cause)) {
-            throw (Error) cause;
-        } else {
-            final StepInvokeError invokeError = StepInvokeError.of(invoker.getName(), cause);
-            errors.add(invokeError);
-            final Reaction reaction = exceptionHandler.handle(invokeError);
-            handleReaction(reaction, invokeError);
-        }
-    }
-
-    private boolean nonRecoverable(final Throwable cause) {
-        // inspired by vavr library's Try class. Those exceptions are considered to be fatal/non-recoverable
-        return cause instanceof LinkageError || cause instanceof ThreadDeath || cause instanceof VirtualMachineError;
+    private void reactToFailure(final StepInvoker invoker, final InvokeResult invokeResult) {
+        final StepInvokeError invokeError = StepInvokeError.of(invoker.getName(), invokeResult.getCause());
+        errors.add(invokeError);
+        final Reaction reaction = exceptionHandler.handle(invokeError);
+        handleReaction(reaction, invokeError);
     }
 
     private void handleReaction(final Reaction reaction, final StepInvokeError invokeError) {
@@ -66,6 +53,10 @@ class InvokersRunner {
         } else {
             throw ErrorReactionException.unsupportedReaction(reaction, invokeError);
         }
+    }
+
+    private boolean shouldContinue(final Iterator<StepInvoker> invokerIterator) {
+        return shouldContinue && invokerIterator.hasNext();
     }
 
     private SequencerResult createResult(final InvokerContext context) {
