@@ -10,6 +10,7 @@ import java.util.List;
 @Data
 public class SequencerResult {
     private final Collection<Artifact> artifacts;
+    private final List<String> steps;
     private final List<String> executedSteps;
     private final List<StepInvokeError> errors;
 

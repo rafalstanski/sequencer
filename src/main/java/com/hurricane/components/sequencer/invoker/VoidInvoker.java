@@ -21,9 +21,9 @@ public class VoidInvoker implements StepInvoker {
     }
 
     @Override
-    public void invoke(final InvokerContext context) {
+    public InvokeResult invoke(final InvokerContext context) {
         final List<Artifact> artifacts = extractRequiredArtifacts(context);
-        processingMethod.invoke(artifacts);
+        return processingMethod.invoke(artifacts);
     }
 
     private List<Artifact> extractRequiredArtifacts(final InvokerContext context) {

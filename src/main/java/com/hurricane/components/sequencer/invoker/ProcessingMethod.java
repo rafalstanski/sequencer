@@ -1,6 +1,7 @@
 package com.hurricane.components.sequencer.invoker;
 
 import com.hurricane.components.sequencer.Artifact;
+import com.hurricane.components.sequencer.exception.StepInvokeException;
 import com.hurricane.components.sequencer.step.Step;
 import lombok.Data;
 
@@ -13,16 +14,17 @@ public class ProcessingMethod {
     private final Method processMethod;
     private final Step target;
 
-    public Object invoke(final List<Artifact> artifacts) {
+    public InvokeResult invoke(final List<Artifact> artifacts) {
         final Object[] values = extractValues(artifacts);
         try {
-            return processMethod.invoke(target, values);
-        } catch (IllegalAccessException e) {
-            //TODO throw appropriate exception
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            //TODO throw appropriate exception
-            throw new RuntimeException(e.getTargetException());
+            final Object returnValue = processMethod.invoke(target, values);
+            return handleSuccess(returnValue);
+        } catch (final IllegalAccessException e) {
+            return handleFailure(StepInvokeException.illegalAccess(processMethod, target, e));
+        } catch (final InvocationTargetException e) {
+            return handleFailure(e.getTargetException());
+        } catch (final Throwable t) {
+            return handleFailure(t);
         }
     }
 
@@ -30,5 +32,22 @@ public class ProcessingMethod {
         return artifacts.stream()
                 .map(Artifact::getValue)
                 .toArray();
+    }
+
+    private InvokeResult handleSuccess(final Object returnValue) {
+        return new Success(returnValue);
+    }
+
+    private InvokeResult handleFailure(final Throwable throwable) {
+        if (nonRecoverable(throwable)) {
+            throw (Error)throwable;
+        } else {
+            return new Failure(throwable);
+        }
+    }
+
+    private boolean nonRecoverable(final Throwable cause) {
+        // inspired by vavr library's Try class. Those exceptions are considered to be fatal/non-recoverable
+        return cause instanceof LinkageError || cause instanceof ThreadDeath || cause instanceof VirtualMachineError;
     }
 }

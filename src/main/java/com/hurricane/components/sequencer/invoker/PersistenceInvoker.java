@@ -22,10 +22,11 @@ public class PersistenceInvoker implements StepInvoker {
     }
 
     @Override
-    public void invoke(final InvokerContext context) {
+    public InvokeResult invoke(final InvokerContext context) {
         final List<Artifact> artifacts = extractRequiredArtifacts(context);
-        final Object returnValue = processingMethod.invoke(artifacts);
-        storeReturnedValue(context, returnValue);
+        final InvokeResult result = processingMethod.invoke(artifacts);
+        storeReturnedValue(context, result);
+        return result;
     }
 
     private List<Artifact> extractRequiredArtifacts(final InvokerContext context) {
@@ -35,9 +36,11 @@ public class PersistenceInvoker implements StepInvoker {
                 .collect(Collectors.toList());
     }
 
-    private void storeReturnedValue(final InvokerContext context, final Object returnValue) {
+    private void storeReturnedValue(final InvokerContext context, InvokeResult result) {
         //TODO add validation of returnValue
-        final Artifact producedArtifact = Artifact.of(producedArtifactDefinition, returnValue);
-        context.store(producedArtifact);
+        if (result.isSuccess()) {
+            final Artifact producedArtifact = Artifact.of(producedArtifactDefinition, result.getResult());
+            context.store(producedArtifact);
+        }
     }
 }

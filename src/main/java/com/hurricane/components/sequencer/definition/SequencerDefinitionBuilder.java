@@ -16,7 +16,7 @@ public class SequencerDefinitionBuilder<T> {
     private Initial<T> initial;
     private List<StepDefinition> stepsDefinition = new ArrayList<>();
     private StepFactory stepFactory = new InstanceStepFactory();
-    private ExceptionHandler exceptionHandler = ExceptionHandlers.rethrow();
+    private ExceptionHandler exceptionHandler = ExceptionHandlers.interrupt();
 
     public void initial(final Initial<T> initial) {
         Validate.notNull(initial, "Initial shouldn't be null");
