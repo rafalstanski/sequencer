@@ -5,7 +5,9 @@ import com.hurricane.components.sequencer.ArtifactDefinition;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Builder
@@ -30,17 +32,25 @@ public class PersistenceInvoker implements StepInvoker {
     }
 
     private List<Artifact> extractRequiredArtifacts(final InvokerContext context) {
-        //TODO add validation of extracted artifact: is type assignable, is not null
         return consumedArtifactsDefinitions.stream()
                 .map(artifactDefinition -> context.take(artifactDefinition.getName()))
                 .collect(Collectors.toList());
     }
 
     private void storeReturnedValue(final InvokerContext context, InvokeResult result) {
-        //TODO add validation of returnValue
         if (result.isSuccess()) {
             final Artifact producedArtifact = Artifact.of(producedArtifactDefinition, result.getResult());
             context.store(producedArtifact);
         }
+    }
+
+    @Override
+    public List<ArtifactDefinition> consumedArtifacts() {
+        return Collections.unmodifiableList(consumedArtifactsDefinitions);
+    }
+
+    @Override
+    public Optional<ArtifactDefinition> producedArtifact() {
+        return Optional.of(producedArtifactDefinition);
     }
 }

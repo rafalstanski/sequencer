@@ -63,7 +63,7 @@ class InvokersRunner {
         return SequencerResult.builder()
                 .steps(extractStepsNames())
                 .executedSteps(executedStepsNames)
-                .artifacts(context.getArtifacts().values())
+                .artifacts(context.producedArtifacts())
                 .errors(errors)
                 .build();
     }

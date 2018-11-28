@@ -16,4 +16,10 @@ public class ArtifactDefinition {
         Validate.notNull(supportedType, "Artifact's supported type shouldn't be null");
         return new ArtifactDefinition(name, supportedType);
     }
+
+    public boolean isCompatibleWith(final ArtifactDefinition sourceDefinition) {
+        Validate.notNull(sourceDefinition, "Checked artifact's definition shouldn't be null");
+        return sourceDefinition.name.equals(name)
+                && sourceDefinition.initialInstanceClass.isAssignableFrom(initialInstanceClass);
+    }
 }
