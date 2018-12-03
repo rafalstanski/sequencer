@@ -1,6 +1,8 @@
 package com.hurricane.components.sequencer;
 
+import com.hurricane.components.sequencer.definition.SequencerBuildConfiguration;
 import com.hurricane.components.sequencer.definition.SequencerDefinition;
+import com.hurricane.components.sequencer.definition.validation.SequencerDefinitionValidator;
 import com.hurricane.components.sequencer.invoker.StepInvoker;
 import com.hurricane.components.sequencer.invoker.builder.StepInvokerBuilder;
 import com.hurricane.components.sequencer.step.Step;
@@ -16,16 +18,26 @@ import static java.util.stream.Collectors.toList;
 
 class SequencerFactory<T> {
     private final StepInvokerBuilder invokerBuilder = new StepInvokerBuilder();
+    private final SequencerDefinitionValidator validator = new SequencerDefinitionValidator();
 
-    public Sequencer<T> create(final SequencerDefinition<T> definition) {
-        final List<StepInvoker> invokers = createInvokers(definition);
-        validateArtifacts(invokers, definition);
-        return createSequencer(invokers, definition);
+    public Sequencer<T> create(final SequencerBuildConfiguration<T> configuration) {
+        final SequencerDefinition definition = createDefinition(configuration);
+        validateDefinition(definition);
+        return createSequencer(definition);
     }
 
-    private List<StepInvoker> createInvokers(final SequencerDefinition<T> definition) {
-        return definition.getStepsDefinitions().stream()
-                .map(stepDefinition -> createInvoker(stepDefinition, definition.getStepFactory()))
+    private SequencerDefinition createDefinition(final SequencerBuildConfiguration<T> configuration) {
+        final List<StepInvoker> invokers = createInvokers(configuration);
+        return SequencerDefinition.builder()
+                .invokers(invokers)
+                .exceptionHandler(configuration.getExceptionHandler())
+                .populator(ContextInitalPopulator.of(configuration.getInitial()))
+                .build();
+    }
+
+    private List<StepInvoker> createInvokers(final SequencerBuildConfiguration<T> configuration) {
+        return configuration.getStepsDefinitions().stream()
+                .map(stepDefinition -> createInvoker(stepDefinition, configuration.getStepFactory()))
                 .collect(toList());
     }
 
@@ -34,32 +46,11 @@ class SequencerFactory<T> {
         return invokerBuilder.build(step);
     }
 
-    //TODO refactor method / extract as a separate class
-    private void validateArtifacts(final List<StepInvoker> invokers, final SequencerDefinition<T> definition) {
-        final Map<String, ArtifactDefinition> availableArtifacts = new HashMap<>();
-        definition.getInitial().asArtifactDefinition().ifPresent(initialDefinition -> availableArtifacts.put(initialDefinition.getName(), initialDefinition));
-        for (StepInvoker invoker : invokers) {
-            final List<ArtifactDefinition> consumedArtifacts = invoker.consumedArtifacts();
-            for (ArtifactDefinition consumedArtifact : consumedArtifacts) {
-                final Optional<ArtifactDefinition> availableArtifact = Optional.ofNullable(availableArtifacts.get(consumedArtifact.getName()));
-                if (availableArtifact.isPresent()) {
-                    if (!consumedArtifact.isCompatibleWith(availableArtifact.get())) {
-                        //TODO create appropriate exception
-                        throw new IllegalArgumentException("Wrong type / incompatible");
-                    }
-                } else {
-                    //TODO create appropriate exception
-                    throw new IllegalArgumentException("Wrong type");
-                }
-            }
-            invoker.producedArtifact().ifPresent(producedDefinition -> availableArtifacts.put(producedDefinition.getName(), producedDefinition));
-        }
+    private void validateDefinition(final SequencerDefinition definition) {
+        validator.validate(definition);
     }
 
-    private Sequencer<T> createSequencer(final List<StepInvoker> invokers, final SequencerDefinition<T> definition) {
-        return Sequencer.of(invokers,
-                definition.getExceptionHandler(),
-                ContextInitalPopulator.of(definition.getInitial())
-        );
+    private Sequencer<T> createSequencer(final SequencerDefinition definition) {
+        return Sequencer.of(definition);
     }
 }

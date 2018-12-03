@@ -12,7 +12,7 @@ import org.apache.commons.lang3.Validate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SequencerDefinitionBuilder<T> {
+public class SequencerBuildConfigurer<T> {
     private Initial<T> initial;
     private List<StepDefinition> stepsDefinition = new ArrayList<>();
     private StepFactory stepFactory = new InstanceStepFactory();
@@ -43,15 +43,15 @@ public class SequencerDefinitionBuilder<T> {
         this.exceptionHandler = exceptionHandler;
     }
 
-    public SequencerDefinition<T> build() {
+    public SequencerBuildConfiguration<T> provide() {
         validateParameters();
-        return new SequencerDefinition<>(
+        return new SequencerBuildConfiguration<>(
                 initial, stepsDefinition, stepFactory, exceptionHandler
         );
     }
 
     private void validateParameters() {
-        Validate.notNull(initial, "Initial must be set in order to create correct SequencerDefinition");
-        //rest of parameters have default value or are protected against null values.
+        Validate.notNull(initial, "Initial must be set in order to create correct SequencerBuildConfiguration");
+        //rest of parameters have default values or are protected against null values.
     }
 }

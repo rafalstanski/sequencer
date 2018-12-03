@@ -1,17 +1,17 @@
 package com.hurricane.components.sequencer;
 
-import com.hurricane.components.sequencer.definition.SequencerDefinition;
-import com.hurricane.components.sequencer.definition.SequencerDefinitionBuilder;
+import com.hurricane.components.sequencer.definition.SequencerBuildConfiguration;
+import com.hurricane.components.sequencer.definition.SequencerBuildConfigurer;
 import com.hurricane.components.sequencer.step.Step;
 import com.hurricane.components.sequencer.step.StepFactory;
 import org.apache.commons.lang3.Validate;
 
 public class SequencerBuilder<T> {
-    private final SequencerDefinitionBuilder<T> definitionBuilder = new SequencerDefinitionBuilder<>();
+    private final SequencerBuildConfigurer<T> configurer = new SequencerBuildConfigurer<>();
     private final SequencerFactory<T> sequencerFactory = new SequencerFactory<>();
 
     private SequencerBuilder(final Initial<T> initial) {
-        definitionBuilder.initial(initial);
+        configurer.initial(initial);
     }
 
     public static <I> SequencerBuilder<I> initializedBy(Initial<I> initial) {
@@ -24,37 +24,37 @@ public class SequencerBuilder<T> {
     }
 
     public SequencerBuilder<T> start(final Class<? extends Step> startStepClass) {
-        definitionBuilder.step(startStepClass);
+        configurer.step(startStepClass);
         return this;
     }
 
     public SequencerBuilder<T> start(final Step startStepInstance) {
-        definitionBuilder.step(startStepInstance);
+        configurer.step(startStepInstance);
         return this;
     }
 
     public SequencerBuilder<T> next(final Class<? extends Step> nextStepClass) {
-        definitionBuilder.step(nextStepClass);
+        configurer.step(nextStepClass);
         return this;
     }
 
     public SequencerBuilder<T> next(final Step nextStepInstance) {
-        definitionBuilder.step(nextStepInstance);
+        configurer.step(nextStepInstance);
         return this;
     }
 
     public SequencerBuilder<T> createBy(final StepFactory factory) {
-        definitionBuilder.stepFactory(factory);
+        configurer.stepFactory(factory);
         return this;
     }
 
     public SequencerBuilder<T> whenError(final ExceptionHandler exceptionHandler) {
-        definitionBuilder.exceptionHandler(exceptionHandler);
+        configurer.exceptionHandler(exceptionHandler);
         return this;
     }
 
     public Sequencer<T> build() {
-        final SequencerDefinition<T> sequencerDefinition = definitionBuilder.build();
-        return sequencerFactory.create(sequencerDefinition);
+        final SequencerBuildConfiguration<T> configuration = configurer.provide();
+        return sequencerFactory.create(configuration);
     }
 }

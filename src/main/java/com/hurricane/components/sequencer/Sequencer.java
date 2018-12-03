@@ -1,26 +1,23 @@
 package com.hurricane.components.sequencer;
 
+import com.hurricane.components.sequencer.definition.SequencerDefinition;
 import com.hurricane.components.sequencer.invoker.InvokerContext;
-import com.hurricane.components.sequencer.invoker.StepInvoker;
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
 
 @RequiredArgsConstructor(staticName = "of")
 public class Sequencer<T> {
-    private final List<StepInvoker> invokers;
-    private final ExceptionHandler exceptionHandler;
-    private final ContextInitalPopulator populator;
+    private final SequencerDefinition definition;
 
     public SequencerResult start(T initialValue) {
         final InvokerContext context = createContext(initialValue);
-        final InvokersRunner runner = InvokersRunner.basedOn(invokers, exceptionHandler);
+        final InvokersRunner runner = InvokersRunner
+                .basedOn(definition.getInvokers(), definition.getExceptionHandler());
         return runner.run(context);
     }
 
     private InvokerContext createContext(final Object initialValue) {
         final InvokerContext context = new InvokerContext();
-        populator.populate(context, initialValue);
+        definition.getPopulator().populate(context, initialValue);
         return context;
     }
 }
