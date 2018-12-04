@@ -1,5 +1,4 @@
 # Thinks that should be done
-* Provide a way to give step a name (NamedStep, if not then from class name)  
 * clear all TODO  
 * Write tests  
 * Write logs messages  

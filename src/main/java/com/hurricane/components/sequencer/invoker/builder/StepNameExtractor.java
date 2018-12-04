@@ -88,7 +88,7 @@ public class StepNameExtractor {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     private static final class DefaultExtractor implements ExtractorStrategy {
         @Override
-        public ExtractorStrategy next(ExtractorStrategy strategy) {
+        public ExtractorStrategy next(final ExtractorStrategy strategy) {
             throw new UnsupportedOperationException("It's a default extractor. It should be used as last");
         }
 
