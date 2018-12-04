@@ -10,13 +10,25 @@ import java.util.Optional;
 
 public class SequencerDefinitionValidator {
     public void validate(final SequencerDefinition definition) {
+        validateExpectedArtifacts(definition);
+    }
+
+    private void validateExpectedArtifacts(final SequencerDefinition definition) {
         final ValidationContext context = createInitialContext(definition);
         for (final StepInvoker invoker : definition.getInvokers()) {
-            validateInvoker(context, invoker);
+            validateInvokerArtifacts(context, invoker);
         }
     }
 
-    private void validateInvoker(final ValidationContext context, final StepInvoker invoker) {
+    private ValidationContext createInitialContext(final SequencerDefinition definition) {
+        final ValidationContext context = new ValidationContext();
+        final Optional<ArtifactDefinition> initialArtifactDefinition = definition.getPopulator()
+                .initialArtifactDefinition();
+        initialArtifactDefinition.ifPresent(context::store);
+        return context;
+    }
+
+    private void validateInvokerArtifacts(final ValidationContext context, final StepInvoker invoker) {
         final List<ArtifactDefinition> consumedArtifacts = invoker.consumedArtifacts();
         for (final ArtifactDefinition consumedArtifact : consumedArtifacts) {
             final Optional<ArtifactDefinition> availableArtifact = context.take(consumedArtifact.getName());
@@ -29,13 +41,5 @@ public class SequencerDefinitionValidator {
             }
         }
         invoker.producedArtifact().ifPresent(context::store);
-    }
-
-    private ValidationContext createInitialContext(final SequencerDefinition definition) {
-        final ValidationContext context = new ValidationContext();
-        final Optional<ArtifactDefinition> initialArtifactDefinition = definition.getPopulator()
-                .initialArtifactDefinition();
-        initialArtifactDefinition.ifPresent(context::store);
-        return context;
     }
 }

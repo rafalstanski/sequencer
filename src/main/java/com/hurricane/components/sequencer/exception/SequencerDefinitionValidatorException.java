@@ -25,11 +25,9 @@ public class SequencerDefinitionValidatorException extends SequencerException {
     private static String createIncompatibleTypeMessage(final StepInvoker invoker,
                                                  final ArtifactDefinition consumedArtifact,
                                                  final ArtifactDefinition availableArtifact) {
-        return "Invoker '" +
+        return "Step '" +
                 invoker.getName() +
-                "' (of a class: " +
-                invoker.getClass() +
-                ") need to consume artifact defined as: " +
+                "' need to consume artifact defined as: " +
                 consumedArtifact + ". " +
                 "Available artifact is of a wrong type: " +
                 availableArtifact;
@@ -38,11 +36,9 @@ public class SequencerDefinitionValidatorException extends SequencerException {
     private static String createUnavailableArtifactMessage(final StepInvoker invoker,
                                                            final ArtifactDefinition consumedArtifact,
                                                            final Collection<ArtifactDefinition> artifactDefinitions) {
-        return "Invoker '" +
+        return "Step '" +
                 invoker.getName() +
-                "' (of a class: " +
-                invoker.getClass() +
-                ") expects artifact defined as: " +
+                "' expects artifact defined as: " +
                 consumedArtifact + ". " +
                 "Available artifact are: " +
                 artifactDefinitions;
