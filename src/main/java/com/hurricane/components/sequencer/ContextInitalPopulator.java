@@ -1,21 +1,27 @@
 package com.hurricane.components.sequencer;
 
 import com.hurricane.components.sequencer.invoker.InvokerContext;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
-@Data(staticConstructor = "of")
+import java.util.Optional;
+
+@RequiredArgsConstructor(staticName = "of")
+@ToString
 public class ContextInitalPopulator {
     private final Initial<?> initial;
 
     public void populate(final InvokerContext invokerContext, final Object initialValue) {
-        if (initial.expectInput()) {
-            final Artifact artifact = createArtifact(initialValue);
-            invokerContext.store(artifact);
-        }
+        final Optional<Artifact> artifact = createArtifact(initialValue);
+        artifact.ifPresent(invokerContext::store);
     }
 
-    private Artifact createArtifact(final Object value) {
-        final ArtifactDefinition definition = ArtifactDefinition.of(initial.getArtifactName(), initial.getInitialInstanceClass());
-        return Artifact.of(definition, value);
+    private Optional<Artifact> createArtifact(final Object value) {
+        final Optional<ArtifactDefinition> artifactDefinition = initial.asArtifactDefinition();
+        return artifactDefinition.map(definition -> Artifact.of(definition, value));
+    }
+
+    public Optional<ArtifactDefinition> initialArtifactDefinition() {
+        return initial.asArtifactDefinition();
     }
 }
