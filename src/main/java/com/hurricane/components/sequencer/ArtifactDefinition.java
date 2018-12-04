@@ -9,7 +9,7 @@ import org.apache.commons.lang3.Validate;
 @Data
 public class ArtifactDefinition {
     private final String name;
-    private final Class<?> initialInstanceClass;
+    private final Class<?> supportedType;
 
     public static ArtifactDefinition of(final String name, final Class<?> supportedType) {
         Validate.notBlank(name, "Artifact's name shouldn't be null");
@@ -20,6 +20,6 @@ public class ArtifactDefinition {
     public boolean isCompatibleWith(final ArtifactDefinition sourceDefinition) {
         Validate.notNull(sourceDefinition, "Checked artifact's definition shouldn't be null");
         return sourceDefinition.name.equals(name)
-                && sourceDefinition.initialInstanceClass.isAssignableFrom(initialInstanceClass);
+                && sourceDefinition.supportedType.isAssignableFrom(supportedType);
     }
 }
