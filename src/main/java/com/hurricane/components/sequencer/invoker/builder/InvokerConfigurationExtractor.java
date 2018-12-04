@@ -13,15 +13,10 @@ class InvokerConfigurationExtractor {
         final Optional<ArtifactDefinition> producedArtifactDefinition = ProducedArtifactFinder.of(processingMethod).find();
         final var builder = InvokerConfiguration.builder()
                 .step(step)
-                .stepName(extractName(step))
+                .stepName(StepNameExtractor.of(step).extract())
                 .processingMethod(processingMethod)
                 .consumedArtifact(ConsumedArtifactsFinder.of(processingMethod).find());
         producedArtifactDefinition.ifPresent(builder::producedArtifact);
         return builder.build();
-    }
-
-    private String extractName(final Step step) {
-        //TODO implement a logic to provide step's name
-        return step.getClass().getCanonicalName();
     }
 }
