@@ -7,9 +7,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -20,81 +17,79 @@ public class StepNameExtractor {
         return nameProvider.get();
     }
 
-//    private static final ExtractorStrategy stategy = new ByInheritanceExtractor()
-//            .next(new ByAnnotationExtractor())
-//            .next(new DefaultExtractor());
+    private static final ExtractorStrategy strategy = new ByInheritanceExtractor()
+            .next(new ByAnnotationExtractor())
+            .next(new DefaultExtractor());
 
-    private static final List<ExtractorStrategy> strategies = Arrays.asList(
-            new ByInheritanceExtractor(), new ByAnnotationExtractor(), new DefaultExtractor()
-    );
-
-    static StepNameExtractor of(final Step step) {
-        final Optional<ExtractorStrategy> foundStrategy = strategies.stream()
-                .filter(strategy -> strategy.accept(step))
-                .findFirst();
-        final ExtractorStrategy extractorStrategy = foundStrategy
-                .orElseThrow(() -> new IllegalArgumentException(""));
-
-        return new StepNameExtractor(() -> extractorStrategy.extract(step));
-
+    public static StepNameExtractor of(final Step step) {
+        return new StepNameExtractor(() -> strategy.extract(step));
     }
 
 
     private interface ExtractorStrategy {
-        boolean accept(Step step);
-//        ExtractorStrategy next(ExtractorStrategy strategy);
+        ExtractorStrategy next(ExtractorStrategy strategy);
         String extract(Step step);
     }
 
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    private static final class ByInheritanceExtractor implements ExtractorStrategy {
-//        private ExtractorStrategy nextStrategy;
-//
-//        @Override
-//        public ExtractorStrategy next(final ExtractorStrategy strategy) {
-//            if (this.nextStrategy != null) {
-//                return this.nextStrategy.next(strategy);
-//            } else {
-//                return this.nextStrategy = strategy;
-//            }
-//        }
+    private static abstract class ExtractorWithSuccessorStrategy implements ExtractorStrategy {
+        protected ExtractorStrategy nextStrategy;
 
         @Override
-        public boolean accept(final Step step) {
-            return step instanceof NamedStep;
+        public ExtractorStrategy next(final ExtractorStrategy strategy) {
+            if (this.nextStrategy != null) {
+                this.nextStrategy.next(strategy);
+            } else {
+                this.nextStrategy = strategy;
+            }
+            return this;
         }
 
         @Override
         public String extract(final Step step) {
             if (accept(step)) {
-                return ((NamedStep) step).name();
+                return doExtract(step);
             } else {
-//                return nextStrategy.extract(step);
-                return null;
+                return nextStrategy.extract(step);
             }
+        }
+
+        protected abstract boolean accept(Step step);
+
+        public abstract String doExtract(Step step);
+    }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    private static final class ByInheritanceExtractor extends ExtractorWithSuccessorStrategy {
+        @Override
+        protected boolean accept(final Step step) {
+            return step instanceof NamedStep;
+        }
+
+        @Override
+        public String doExtract(final Step step) {
+            return ((NamedStep) step).name();
         }
     }
 
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    private static final class ByAnnotationExtractor implements ExtractorStrategy {
+    private static final class ByAnnotationExtractor extends ExtractorWithSuccessorStrategy {
         @Override
         public boolean accept(final Step step) {
             return step.getClass().isAnnotationPresent(Name.class);
         }
 
         @Override
-        public String extract(final Step step) {
-            final Name name = step.getClass().getAnnotation(Name.class);
-            return name.value();
+        public String doExtract(final Step step) {
+            return step.getClass().getAnnotation(Name.class).value();
         }
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     private static final class DefaultExtractor implements ExtractorStrategy {
         @Override
-        public boolean accept(final Step step) {
-            return true;
+        public ExtractorStrategy next(ExtractorStrategy strategy) {
+            throw new UnsupportedOperationException("It's a default extractor. It should be used as last");
         }
 
         @Override
