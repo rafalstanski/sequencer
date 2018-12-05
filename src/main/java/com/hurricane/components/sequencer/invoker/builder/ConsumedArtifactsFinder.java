@@ -2,6 +2,7 @@ package com.hurricane.components.sequencer.invoker.builder;
 
 import com.hurricane.components.sequencer.ArtifactDefinition;
 import com.hurricane.components.sequencer.annotations.Artifact;
+import com.hurricane.components.sequencer.exception.ConsumedArtifactsException;
 import com.hurricane.components.sequencer.invoker.ProcessingMethod;
 import lombok.AllArgsConstructor;
 
@@ -19,11 +20,11 @@ class ConsumedArtifactsFinder {
         final Method processMethod = processingMethod.getProcessMethod();
         final Parameter[] parameters = processMethod.getParameters();
         return Arrays.stream(parameters)
-                .map(this::createDefinition)
+                .map(this::createArtifactDefinition)
                 .collect(Collectors.toList());
     }
 
-    private ArtifactDefinition createDefinition(final Parameter parameter) {
+    private ArtifactDefinition createArtifactDefinition(final Parameter parameter) {
         return ArtifactDefinition.of(extractName(parameter), parameter.getType());
     }
 
@@ -34,8 +35,7 @@ class ConsumedArtifactsFinder {
         } else if (parameter.isNamePresent()) {
             return parameter.getName();
         } else {
-            //TODO give correct exception
-            throw new IllegalStateException("You need to compile with -parameters option or use @Artifact annotation");
+            throw ConsumedArtifactsException.unableToDetermineArtifactName(processingMethod, parameter);
         }
     }
 }

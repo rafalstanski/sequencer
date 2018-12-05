@@ -1,5 +1,7 @@
 package com.hurricane.components.sequencer.step;
 
+import com.hurricane.components.sequencer.exception.StepFactoryException;
+
 public class InstanceStepFactory implements StepFactory {
     @Override
     public Step create(final StepDefinition stepDefinition) {
@@ -14,11 +16,11 @@ public class InstanceStepFactory implements StepFactory {
         try {
             return stepDefinition.getInstanceClass().newInstance();
         } catch (final InstantiationException e) {
-            //TODO throw appropriate exception
-            throw new RuntimeException(e);
+            throw StepFactoryException.incorrectClass(stepDefinition, e);
         } catch (final IllegalAccessException e) {
-            //TODO throw appropriate exceptions
-            throw new RuntimeException(e);
+            throw StepFactoryException.illegalAccess(stepDefinition, e);
+        } catch (final RuntimeException e) {
+            throw StepFactoryException.exceptionWhileCreating(stepDefinition, e);
         }
     }
 }
