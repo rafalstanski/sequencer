@@ -1,10 +1,9 @@
 # Thinks that should be done
-* clear all TODO  
+* Rearrange packages by its purpose - like construct (classes used only to extract/validate/set a Sequencer) / invoke / core  
 * Write tests  
 * Write logs messages  
 
 # Maybe
-* Rearrange packages by its purpose - like construct (classes used only to extract/validate/set a Sequencer) / invoke / core 
 * listeners - before and after Step execution  
 * guards - before executing step check if all required artifacts are available
 * delegate all validation checks to custom assertionUtils (will be easier to remove dependencies or to just gain more control like able to throw SequencerException)    
