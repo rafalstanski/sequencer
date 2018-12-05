@@ -4,7 +4,6 @@ import com.hurricane.components.sequencer.annotations.Name;
 import com.hurricane.components.sequencer.step.NamedStep;
 import com.hurricane.components.sequencer.step.Step;
 import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.function.Supplier;
@@ -26,12 +25,12 @@ public class StepNameExtractor {
     }
 
 
-    private interface ExtractorStrategy {
+    interface ExtractorStrategy {
         ExtractorStrategy next(ExtractorStrategy strategy);
         String extract(Step step);
     }
 
-    private static abstract class ExtractorWithSuccessorStrategy implements ExtractorStrategy {
+    static abstract class ExtractorWithSuccessorStrategy implements ExtractorStrategy {
         protected ExtractorStrategy nextStrategy;
 
         @Override
@@ -58,8 +57,7 @@ public class StepNameExtractor {
         public abstract String doExtract(Step step);
     }
 
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    private static final class ByInheritanceExtractor extends ExtractorWithSuccessorStrategy {
+    static final class ByInheritanceExtractor extends ExtractorWithSuccessorStrategy {
         @Override
         protected boolean accept(final Step step) {
             return step instanceof NamedStep;
@@ -72,8 +70,7 @@ public class StepNameExtractor {
     }
 
 
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    private static final class ByAnnotationExtractor extends ExtractorWithSuccessorStrategy {
+    static final class ByAnnotationExtractor extends ExtractorWithSuccessorStrategy {
         @Override
         public boolean accept(final Step step) {
             return step.getClass().isAnnotationPresent(Name.class);
@@ -85,8 +82,7 @@ public class StepNameExtractor {
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    private static final class DefaultExtractor implements ExtractorStrategy {
+    static final class DefaultExtractor implements ExtractorStrategy {
         @Override
         public ExtractorStrategy next(final ExtractorStrategy strategy) {
             throw new UnsupportedOperationException("It's a default extractor. It should be used as last");
