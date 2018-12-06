@@ -2,6 +2,8 @@
 * Rearrange packages by its purpose - like construct (classes used only to extract/validate/set a Sequencer) / invoke / core  
 * Write tests  
 * Write logs messages  
+* Write a readme.md
+* create deploy's pipeline to maven repository  
 
 # Maybe
 * listeners - before and after Step execution  
