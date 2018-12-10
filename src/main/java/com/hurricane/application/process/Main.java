@@ -19,7 +19,7 @@ public class Main {
 
         final SequencerResult result = sequencer.start("Rafal Stanski");
         System.out.println("Successful run: " + result.success());
-        System.out.println("Step executed: " + result.getExecutedSteps());
+        System.out.println("Steps executed: " + result.getExecutedSteps());
         System.out.println("Artifacts: " + result.getArtifacts());
         System.out.println("Errors: " + result.getErrors());
     }

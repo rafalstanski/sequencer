@@ -6,13 +6,9 @@ import com.hurricane.components.sequencer.definition.validation.SequencerDefinit
 import com.hurricane.components.sequencer.invoker.StepInvoker;
 import com.hurricane.components.sequencer.invoker.builder.StepInvokerBuilder;
 import com.hurricane.components.sequencer.step.Step;
-import com.hurricane.components.sequencer.step.StepDefinition;
 import com.hurricane.components.sequencer.step.StepFactory;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -27,27 +23,29 @@ class SequencerFactory<T> {
     }
 
     private SequencerDefinition createDefinition(final SequencerBuildConfiguration<T> configuration) {
-        final List<StepInvoker> invokers = createInvokers(configuration);
         return SequencerDefinition.builder()
-                .invokers(invokers)
+                .invokers(createInvokers(configuration))
                 .exceptionHandler(configuration.getExceptionHandler())
                 .populator(ContextInitalPopulator.of(configuration.getInitial()))
                 .build();
     }
 
+    private void validateDefinition(final SequencerDefinition definition) {
+        validator.validate(definition);
+    }
+
     private List<StepInvoker> createInvokers(final SequencerBuildConfiguration<T> configuration) {
-        return configuration.getStepsDefinitions().stream()
-                .map(stepDefinition -> createInvoker(stepDefinition, configuration.getStepFactory()))
+        final List<Step> steps = createSteps(configuration);
+        return steps.stream()
+                .map(this.invokerBuilder::build)
                 .collect(toList());
     }
 
-    private StepInvoker createInvoker(final StepDefinition stepDefinition, final StepFactory stepFactory) {
-        final Step step = stepFactory.create(stepDefinition);
-        return invokerBuilder.build(step);
-    }
-
-    private void validateDefinition(final SequencerDefinition definition) {
-        validator.validate(definition);
+    private List<Step> createSteps(final SequencerBuildConfiguration<T> configuration) {
+        final StepFactory stepFactory = configuration.getStepFactory();
+        return configuration.getStepsDefinitions().stream()
+                .map(stepFactory::create)
+                .collect(toList());
     }
 
     private Sequencer<T> createSequencer(final SequencerDefinition definition) {
