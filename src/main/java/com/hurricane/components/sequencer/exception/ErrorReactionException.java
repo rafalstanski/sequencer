@@ -1,18 +1,23 @@
 package com.hurricane.components.sequencer.exception;
 
-import com.hurricane.components.sequencer.Reaction;
-import com.hurricane.components.sequencer.StepInvokeError;
+import com.hurricane.components.sequencer.runtime.Reaction;
+import com.hurricane.components.sequencer.runtime.StepInvokeError;
 
 public class ErrorReactionException extends SequencerException {
     private ErrorReactionException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public static ErrorReactionException unsupportedReaction(final Reaction reaction, final StepInvokeError invokeError) {
-        return new ErrorReactionException(createUnsupportedReactionMessage(reaction, invokeError), invokeError.getCause());
+    public static ErrorReactionException unsupportedReaction(
+            final Reaction reaction,
+            final StepInvokeError invokeError) {
+        return new ErrorReactionException(
+                createUnsupportedReactionMessage(reaction, invokeError), invokeError.getCause());
     }
 
-    private static String createUnsupportedReactionMessage(final Reaction reaction, final StepInvokeError invokeError) {
+    private static String createUnsupportedReactionMessage(
+            final Reaction reaction,
+            final StepInvokeError invokeError) {
         return "Unsupported reaction from error handler: " +
                 reaction + ". " +
                 "Exception occurred when invoking step: " +

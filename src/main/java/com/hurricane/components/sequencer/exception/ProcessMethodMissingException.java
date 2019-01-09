@@ -1,7 +1,7 @@
 package com.hurricane.components.sequencer.exception;
 
-import com.hurricane.components.sequencer.annotations.Process;
-import com.hurricane.components.sequencer.step.Step;
+import com.hurricane.components.sequencer.configure.annotations.Process;
+import com.hurricane.components.sequencer.runtime.Step;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -16,8 +16,11 @@ public class ProcessMethodMissingException extends SequencerException {
         return new ProcessMethodMissingException(createNotFoundMessage(step));
     }
 
-    public static ProcessMethodMissingException tooMany(final Step step, final Collection<Method> processMethods) {
-        return new ProcessMethodMissingException(createTooManyMessage(step, processMethods));
+    public static ProcessMethodMissingException tooMany(
+            final Step step,
+            final Collection<Method> processMethods) {
+        return new ProcessMethodMissingException(
+                createTooManyMessage(step, processMethods));
     }
 
     private static String createNotFoundMessage(final Step step) {

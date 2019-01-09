@@ -8,6 +8,8 @@ buildscript {
 plugins {
 	id 'java'
 	id 'groovy' //for spock unit tests
+    id 'jacoco' //code coverage
+    id 'com.github.kt3k.coveralls' version '2.8.2' //coveralls.io
 }
 
 repositories {
@@ -20,9 +22,18 @@ sourceCompatibility = 1.8 //by default targetCompatibility = sourceCompatibility
 
 dependencies {
     //helpers
-    compileOnly 'org.projectlombok:lombok:1.18.4'
-    compile 'org.apache.commons:commons-lang3:3.8.1'
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.4'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
 
 	//Unit testing
-    testCompile 'org.spockframework:spock-core:1.2-groovy-2.5'
+    testCompile group: 'org.spockframework', name: 'spock-core', version: '1.2-groovy-2.5'
+    testCompile group: 'cglib', name: 'cglib-nodep', version: '3.2.10'
+    testCompile group: 'org.hamcrest', name: 'hamcrest', version: '2.1'
+    testCompile group: 'com.github.npathai', name: 'hamcrest-optional', version: '2.0.0'
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+    }
 }

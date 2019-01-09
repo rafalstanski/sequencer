@@ -1,9 +1,9 @@
 package com.hurricane.application.process;
 
 import com.hurricane.application.process.model.Person;
-import com.hurricane.components.sequencer.annotations.Artifact;
-import com.hurricane.components.sequencer.annotations.Process;
-import com.hurricane.components.sequencer.step.Step;
+import com.hurricane.components.sequencer.configure.annotations.Artifact;
+import com.hurricane.components.sequencer.configure.annotations.Process;
+import com.hurricane.components.sequencer.runtime.Step;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
