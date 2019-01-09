@@ -1,24 +1,33 @@
 package com.hurricane.components.sequencer.exception;
 
-import com.hurricane.components.sequencer.step.StepDefinition;
+import com.hurricane.components.sequencer.configure.step.StepDefinition;
 
-import java.util.Arrays;
+import static java.util.Arrays.asList;
 
 public class StepFactoryException extends SequencerException {
     private StepFactoryException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public static StepFactoryException incorrectClass(final StepDefinition stepDefinition, final InstantiationException e) {
-        return new StepFactoryException(createIncorrectClassMessage(stepDefinition), e);
+    public static StepFactoryException incorrectClass(
+            final StepDefinition stepDefinition,
+            final InstantiationException e) {
+        return new StepFactoryException(
+                createIncorrectClassMessage(stepDefinition), e);
     }
 
-    public static StepFactoryException illegalAccess(final StepDefinition stepDefinition, final IllegalAccessException e) {
-        return new StepFactoryException(createIllegalAccessMessage(stepDefinition), e);
+    public static StepFactoryException illegalAccess(
+            final StepDefinition stepDefinition,
+            final IllegalAccessException e) {
+        return new StepFactoryException(
+                createIllegalAccessMessage(stepDefinition), e);
     }
 
-    public static StepFactoryException exceptionWhileCreating(final StepDefinition stepDefinition, final RuntimeException e) {
-        return new StepFactoryException(createExceptionWhileCreatingMessage(stepDefinition), e);
+    public static StepFactoryException exceptionWhileCreating(
+            final StepDefinition stepDefinition,
+            final RuntimeException e) {
+        return new StepFactoryException(
+                createExceptionWhileCreatingMessage(stepDefinition), e);
     }
 
     private static String createIncorrectClassMessage(final StepDefinition stepDefinition) {
@@ -33,7 +42,7 @@ public class StepFactoryException extends SequencerException {
                 "do to illegal constructor access. " +
                 "Check if step's constructor is public. " +
                 "Available/defined constructors: " +
-                Arrays.asList(stepDefinition.getInstanceClass().getDeclaredConstructors());
+                asList(stepDefinition.getInstanceClass().getDeclaredConstructors());
     }
 
     private static String createExceptionWhileCreatingMessage(final StepDefinition stepDefinition) {
