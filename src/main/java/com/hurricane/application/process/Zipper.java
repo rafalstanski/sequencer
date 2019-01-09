@@ -1,8 +1,8 @@
 package com.hurricane.application.process;
 
-import com.hurricane.components.sequencer.annotations.Artifact;
-import com.hurricane.components.sequencer.annotations.Process;
-import com.hurricane.components.sequencer.step.Step;
+import com.hurricane.components.sequencer.configure.annotations.Artifact;
+import com.hurricane.components.sequencer.configure.annotations.Process;
+import com.hurricane.components.sequencer.runtime.Step;
 
 import static com.hurricane.application.process.SampleProcessArtifacts.REFERENCE_ID;
 

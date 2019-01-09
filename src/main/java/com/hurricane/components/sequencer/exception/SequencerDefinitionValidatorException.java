@@ -1,7 +1,7 @@
 package com.hurricane.components.sequencer.exception;
 
-import com.hurricane.components.sequencer.ArtifactDefinition;
-import com.hurricane.components.sequencer.invoker.StepInvoker;
+import com.hurricane.components.sequencer.runtime.ArtifactDefinition;
+import com.hurricane.components.sequencer.runtime.invoker.StepInvoker;
 
 import java.util.Collection;
 
@@ -10,21 +10,26 @@ public class SequencerDefinitionValidatorException extends SequencerException {
         super(message);
     }
 
-    public static SequencerDefinitionValidatorException incompatibleType(final StepInvoker invoker,
-                                                                         final ArtifactDefinition consumedArtifact,
-                                                                         final ArtifactDefinition availableArtifact) {
-        return new SequencerDefinitionValidatorException(createIncompatibleTypeMessage(invoker, consumedArtifact, availableArtifact));
+    public static SequencerDefinitionValidatorException incompatibleType(
+            final StepInvoker invoker,
+            final ArtifactDefinition consumedArtifact,
+            final ArtifactDefinition availableArtifact) {
+        return new SequencerDefinitionValidatorException(
+                createIncompatibleTypeMessage(invoker, consumedArtifact, availableArtifact));
     }
 
-    public static SequencerDefinitionValidatorException unavailableArtifact(final StepInvoker invoker,
-                                                                            final ArtifactDefinition consumedArtifact,
-                                                                            final Collection<ArtifactDefinition> artifactDefinitions) {
-        return new SequencerDefinitionValidatorException(createUnavailableArtifactMessage(invoker, consumedArtifact, artifactDefinitions));
+    public static SequencerDefinitionValidatorException unavailableArtifact(
+            final StepInvoker invoker,
+            final ArtifactDefinition consumedArtifact,
+            final Collection<ArtifactDefinition> artifactDefinitions) {
+        return new SequencerDefinitionValidatorException(
+                createUnavailableArtifactMessage(invoker, consumedArtifact, artifactDefinitions));
     }
 
-    private static String createIncompatibleTypeMessage(final StepInvoker invoker,
-                                                 final ArtifactDefinition consumedArtifact,
-                                                 final ArtifactDefinition availableArtifact) {
+    private static String createIncompatibleTypeMessage(
+            final StepInvoker invoker,
+            final ArtifactDefinition consumedArtifact,
+            final ArtifactDefinition availableArtifact) {
         return "Step '" +
                 invoker.getName() +
                 "' need to consume artifact defined as: " +
@@ -33,9 +38,10 @@ public class SequencerDefinitionValidatorException extends SequencerException {
                 availableArtifact;
     }
 
-    private static String createUnavailableArtifactMessage(final StepInvoker invoker,
-                                                           final ArtifactDefinition consumedArtifact,
-                                                           final Collection<ArtifactDefinition> artifactDefinitions) {
+    private static String createUnavailableArtifactMessage(
+            final StepInvoker invoker,
+            final ArtifactDefinition consumedArtifact,
+            final Collection<ArtifactDefinition> artifactDefinitions) {
         return "Step '" +
                 invoker.getName() +
                 "' expects artifact defined as: " +
