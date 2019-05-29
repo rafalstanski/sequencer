@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 class StepDefinitionSpec extends Specification {
     static final STEP_INSTANCE = new Step(){}
-    static final STEP_CLASS = (new Step() {}).getClass() as Class<? extends Step>
+    static final STEP_CLASS = STEP_INSTANCE.getClass() as Class<? extends Step>
 
     def "should create definition using instance"() {
         when:

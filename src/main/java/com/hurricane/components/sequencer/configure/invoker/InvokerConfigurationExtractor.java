@@ -24,6 +24,7 @@ class InvokerConfigurationExtractor {
                 .processingMethod(ProcessingMethod.of(processMethod, step))
                 .consumedArtifact(consumedArtifacts(processMethod));
         configureProducedArtifact(processMethod, builder);
+
         return builder.build();
     }
 

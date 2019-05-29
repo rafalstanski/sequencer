@@ -23,10 +23,11 @@ public class InvokersRunner {
 
     public SequencerResult run(final InvokerContext context) {
         final Iterator<StepInvoker> invokerIterator = invokers.iterator();
-        do {
+        while (shouldContinue(invokerIterator)) {
             final StepInvoker invoker = invokerIterator.next();
             executeSingleInvoker(invoker, context);
-        } while (shouldContinue(invokerIterator));
+        }
+
         return createResult(context);
     }
 

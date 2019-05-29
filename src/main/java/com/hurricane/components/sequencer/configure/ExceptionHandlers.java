@@ -4,14 +4,14 @@ import com.hurricane.components.sequencer.runtime.ExceptionHandler;
 import com.hurricane.components.sequencer.runtime.Reaction;
 
 public class ExceptionHandlers {
-    private static final ExceptionHandler IGNORE = invokeError -> Reaction.IGNORE;
     private static final ExceptionHandler INTERRUPT = invokeError -> Reaction.INTERRUPT;
+    private static final ExceptionHandler IGNORE = invokeError -> Reaction.IGNORE;
 
     public static ExceptionHandler interrupt() {
-        return IGNORE;
+        return INTERRUPT;
     }
 
     public static ExceptionHandler ignore() {
-        return INTERRUPT;
+        return IGNORE;
     }
 }
