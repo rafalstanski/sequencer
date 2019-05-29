@@ -3,24 +3,19 @@ package com.hurricane.components.sequencer.configure.invoker;
 import com.hurricane.components.sequencer.configure.annotations.Process;
 import com.hurricane.components.sequencer.exception.ProcessMethodMissingException;
 import com.hurricane.components.sequencer.runtime.Step;
-import com.hurricane.components.sequencer.runtime.invoker.ProcessingMethod;
-import lombok.AllArgsConstructor;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor(staticName = "of")
 class ProcessMethodFinder {
-    final Step step;
-
-    public ProcessingMethod find() {
+    public Method find(final Step step) {
         final List<Method> processMethods = findProcessMethods(step);
         if (foundExactlyOneMethod(processMethods)) {
-            return createProcessingMethod(processMethods.get(0));
+            return firstMethod(processMethods);
         } else {
-            throw handleIncorrectState(processMethods);
+            throw handleIncorrectState(step, processMethods);
         }
     }
 
@@ -31,11 +26,11 @@ class ProcessMethodFinder {
                 .collect(Collectors.toList());
     }
 
-    private ProcessingMethod createProcessingMethod(final Method processMethod) {
-        return ProcessingMethod.of(processMethod, step);
+    private Method firstMethod(final List<Method> processMethods) {
+        return processMethods.get(0);
     }
 
-    private RuntimeException handleIncorrectState(final List<Method> processMethods) {
+    private RuntimeException handleIncorrectState(final Step step, final List<Method> processMethods) {
         if (notFoundProcessingMethod(processMethods)) {
             return ProcessMethodMissingException.notFound(step);
         } else {

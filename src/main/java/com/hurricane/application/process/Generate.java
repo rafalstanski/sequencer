@@ -19,6 +19,7 @@ public class Generate implements NamedStep {
     @Artifact(REFERENCE_ID)
     public Integer generate(@Artifact(PERSON) final Person person) {
         System.out.println("generate: " + person);
+
         return RandomUtils.nextInt();
     }
 }

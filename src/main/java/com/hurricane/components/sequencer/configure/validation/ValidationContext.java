@@ -2,7 +2,12 @@ package com.hurricane.components.sequencer.configure.validation;
 
 import com.hurricane.components.sequencer.runtime.ArtifactDefinition;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import static java.util.Collections.unmodifiableCollection;
 
 class ValidationContext {
     private final Map<String, ArtifactDefinition> artifactsDefinitions = new HashMap<>();
@@ -16,6 +21,6 @@ class ValidationContext {
     }
 
     public Collection<ArtifactDefinition> availableArtifacts() {
-        return Collections.unmodifiableCollection(artifactsDefinitions.values());
+        return unmodifiableCollection(artifactsDefinitions.values());
     }
 }

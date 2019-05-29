@@ -18,14 +18,6 @@ public class SequencerDefinitionValidatorException extends SequencerException {
                 createIncompatibleTypeMessage(invoker, consumedArtifact, availableArtifact));
     }
 
-    public static SequencerDefinitionValidatorException unavailableArtifact(
-            final StepInvoker invoker,
-            final ArtifactDefinition consumedArtifact,
-            final Collection<ArtifactDefinition> artifactDefinitions) {
-        return new SequencerDefinitionValidatorException(
-                createUnavailableArtifactMessage(invoker, consumedArtifact, artifactDefinitions));
-    }
-
     private static String createIncompatibleTypeMessage(
             final StepInvoker invoker,
             final ArtifactDefinition consumedArtifact,
@@ -38,6 +30,14 @@ public class SequencerDefinitionValidatorException extends SequencerException {
                 availableArtifact;
     }
 
+    public static SequencerDefinitionValidatorException unavailableArtifact(
+            final StepInvoker invoker,
+            final ArtifactDefinition consumedArtifact,
+            final Collection<ArtifactDefinition> artifactDefinitions) {
+        return new SequencerDefinitionValidatorException(
+                createUnavailableArtifactMessage(invoker, consumedArtifact, artifactDefinitions));
+    }
+
     private static String createUnavailableArtifactMessage(
             final StepInvoker invoker,
             final ArtifactDefinition consumedArtifact,
@@ -48,5 +48,15 @@ public class SequencerDefinitionValidatorException extends SequencerException {
                 consumedArtifact + ". " +
                 "Available artifact are: " +
                 artifactDefinitions;
+    }
+
+    public static SequencerDefinitionValidatorException nonUniqueName(final StepInvoker invoker) {
+        return new SequencerDefinitionValidatorException(createNonUniqueNameMessage(invoker));
+    }
+
+    private static String createNonUniqueNameMessage(final StepInvoker invoker) {
+        return "Step named '" +
+                invoker.getName() +
+                "' is already defined in a sequence";
     }
 }

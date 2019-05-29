@@ -3,14 +3,18 @@ package com.hurricane.components.sequencer.runtime.invoker;
 import com.hurricane.components.sequencer.exception.StepInvokeException;
 import com.hurricane.components.sequencer.runtime.Artifact;
 import com.hurricane.components.sequencer.runtime.Step;
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-@Data(staticConstructor = "of")
+//TODO change class's name. Should be more like ProcessingUnit, WorkUnit
+@RequiredArgsConstructor(staticName = "of")
 public class ProcessingMethod {
+    //TODO should not be visible from outside
+    @Getter
     private final Method processMethod;
     private final Step target;
 
@@ -35,14 +39,14 @@ public class ProcessingMethod {
     }
 
     private InvokeResult handleSuccess(final Object returnValue) {
-        return new Success(returnValue);
+        return InvokeResult.success(returnValue);
     }
 
     private InvokeResult handleFailure(final Throwable throwable) {
         if (nonRecoverable(throwable)) {
             throw (Error)throwable;
         } else {
-            return new Failure(throwable);
+            return InvokeResult.failed(throwable);
         }
     }
 

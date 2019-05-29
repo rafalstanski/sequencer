@@ -10,7 +10,7 @@ public class StepInvokerBuilder {
 
     public StepInvoker build(final Step step) {
         final InvokerConfiguration configuration = extractor.extract(step);
-        if (configuration.producedArtifactDefined()) {
+        if (configuration.producesArtifact()) {
             return invokerHandingReturnValue(configuration);
         } else {
             return invokerForNoReturnValue(configuration);

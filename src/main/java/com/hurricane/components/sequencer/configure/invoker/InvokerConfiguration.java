@@ -18,7 +18,7 @@ class InvokerConfiguration {
     private final List<ArtifactDefinition> consumedArtifact;
     private final ArtifactDefinition producedArtifact;
 
-    public boolean producedArtifactDefined() {
+    public boolean producesArtifact() {
         return Objects.nonNull(producedArtifact);
     }
 }

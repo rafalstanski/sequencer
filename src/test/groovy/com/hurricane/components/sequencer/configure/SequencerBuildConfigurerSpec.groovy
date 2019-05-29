@@ -11,7 +11,7 @@ import spock.lang.Specification
 
 class SequencerBuildConfigurerSpec extends Specification {
     def "should throw exception when trying to build from newly created configurer"() {
-        setup:
+        given:
             def configurer = new SequencerBuildConfigurer()
         when:
             configurer.provide()
@@ -20,7 +20,7 @@ class SequencerBuildConfigurerSpec extends Specification {
     }
 
     def "should create configuration when just Initial is set"() {
-        setup:
+        given:
             def configurer = new SequencerBuildConfigurer()
             configurer.initial(Initial.non())
         when:
@@ -30,7 +30,7 @@ class SequencerBuildConfigurerSpec extends Specification {
     }
 
     def "should create default configuration when just Initial is set"() {
-        setup:
+        given:
             def configurer = new SequencerBuildConfigurer()
             configurer.initial(Initial.non())
         when:
@@ -42,7 +42,7 @@ class SequencerBuildConfigurerSpec extends Specification {
     }
 
     def "should set custom exceptionHandler when provided"() {
-        setup:
+        given:
             def configurer = configurerWithInitialNon()
             def handler = { RuntimeException exception -> return Reaction.IGNORE } as ExceptionHandler
             configurer.exceptionHandler(handler)
@@ -53,7 +53,7 @@ class SequencerBuildConfigurerSpec extends Specification {
     }
 
     def "should set custom stepFactory when provided"() {
-        setup:
+        given:
             def configurer = configurerWithInitialNon()
             def factory = { stepDefinition -> return new Step() {} } as StepFactory
             configurer.stepFactory(factory)
@@ -64,7 +64,7 @@ class SequencerBuildConfigurerSpec extends Specification {
     }
 
     def "should add steps configuration when step classes provided"() {
-        setup:
+        given:
             def configurer = configurerWithInitialNon()
             def stepClass1 = (new Step() {}).getClass() as Class<? extends Step>
             def stepClass2 = (new Step() {}).getClass() as Class<? extends Step>
@@ -78,7 +78,7 @@ class SequencerBuildConfigurerSpec extends Specification {
     }
 
     def "should add steps configuration when step instances provided"() {
-        setup:
+        given:
         def configurer = configurerWithInitialNon()
         def stepInstance1 = new Step() {}
         def stepInstance2 = new Step() {}
@@ -92,7 +92,7 @@ class SequencerBuildConfigurerSpec extends Specification {
     }
 
     def "should fail when trying to set NULL step class"() {
-        setup:
+        given:
             def configurer = configurerWithInitialNon()
             def nullStep = null as Step
         when:
@@ -102,7 +102,7 @@ class SequencerBuildConfigurerSpec extends Specification {
     }
 
     def "should fail when trying to set NULL step instance"() {
-        setup:
+        given:
             def configurer = configurerWithInitialNon()
             def nullStep = null as Class<? extends Step>
         when:
@@ -112,7 +112,7 @@ class SequencerBuildConfigurerSpec extends Specification {
     }
 
     def "should fail when trying to set NULL step factory"() {
-        setup:
+        given:
             def configurer = configurerWithInitialNon()
         when:
             configurer.stepFactory(null)
@@ -122,7 +122,7 @@ class SequencerBuildConfigurerSpec extends Specification {
 
 
     def "should fail when trying to set NULL exception handler"() {
-        setup:
+        given:
             def configurer = configurerWithInitialNon()
         when:
             configurer.exceptionHandler(null)

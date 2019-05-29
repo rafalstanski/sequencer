@@ -2,32 +2,28 @@ package com.hurricane.components.sequencer.configure.invoker;
 
 import com.hurricane.components.sequencer.configure.annotations.Artifact;
 import com.hurricane.components.sequencer.runtime.ArtifactDefinition;
-import com.hurricane.components.sequencer.runtime.invoker.ProcessingMethod;
-import lombok.AllArgsConstructor;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-@AllArgsConstructor(staticName = "of")
 class ProducedArtifactFinder {
-    final ProcessingMethod processingMethod;
-
-    public Optional<ArtifactDefinition> find() {
-        if (methodProducesArtifact()) {
-            return Optional.of(createProducedArtifactDefinition());
+    public Optional<ArtifactDefinition> find(final Method processMethod) {
+        if (methodProducesArtifact(processMethod)) {
+            return Optional.of(createProducedArtifactDefinition(processMethod));
         } else {
             return Optional.empty();
         }
     }
 
-    private boolean methodProducesArtifact() {
-        final Method processMethod = processingMethod.getProcessMethod();
+    private boolean methodProducesArtifact(final Method processMethod) {
         return processMethod.isAnnotationPresent(Artifact.class);
     }
 
-    private ArtifactDefinition createProducedArtifactDefinition() {
-        final Method processMethod = processingMethod.getProcessMethod();
-        return ArtifactDefinition.of(extractName(processMethod), processMethod.getReturnType());
+    private ArtifactDefinition createProducedArtifactDefinition(final Method processMethod) {
+        return ArtifactDefinition.of(
+                extractName(processMethod),
+                processMethod.getReturnType()
+        );
     }
 
     private String extractName(final Method processMethod) {

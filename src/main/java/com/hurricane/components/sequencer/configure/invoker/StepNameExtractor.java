@@ -3,95 +3,37 @@ package com.hurricane.components.sequencer.configure.invoker;
 import com.hurricane.components.sequencer.configure.annotations.Name;
 import com.hurricane.components.sequencer.runtime.NamedStep;
 import com.hurricane.components.sequencer.runtime.Step;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.Validate;
 
-import java.util.function.Supplier;
-
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class StepNameExtractor {
-    private final Supplier<String> nameProvider;
-
-    public String extract() {
-        return nameProvider.get();
-    }
-
-    private static final ExtractorStrategy strategy =
-            new ByInheritanceExtractor()
-            .next(new ByAnnotationExtractor())
-            .next(new DefaultExtractor());
-
-    public static StepNameExtractor of(final Step step) {
-        return new StepNameExtractor(() -> strategy.extract(step));
-    }
-
-
-    interface ExtractorStrategy {
-        ExtractorStrategy next(ExtractorStrategy strategy);
-        String extract(Step step);
-    }
-
-    static abstract class ExtractorWithSuccessorStrategy implements ExtractorStrategy {
-        protected ExtractorStrategy nextStrategy;
-
-        @Override
-        public ExtractorStrategy next(final ExtractorStrategy strategy) {
-            if (this.nextStrategy != null) {
-                this.nextStrategy.next(strategy);
-            } else {
-                this.nextStrategy = strategy;
-            }
-            return this;
-        }
-
-        @Override
-        public String extract(final Step step) {
-            if (accept(step)) {
-                return doExtract(step);
-            } else {
-                return nextStrategy.extract(step);
-            }
-        }
-
-        protected abstract boolean accept(Step step);
-
-        public abstract String doExtract(Step step);
-    }
-
-    static final class ByInheritanceExtractor extends ExtractorWithSuccessorStrategy {
-        @Override
-        protected boolean accept(final Step step) {
-            return step instanceof NamedStep;
-        }
-
-        @Override
-        public String doExtract(final Step step) {
-            return ((NamedStep) step).name();
+class StepNameExtractor {
+    public String extract(final Step step) {
+        Validate.notNull(step, "Unable to extract step's name from a null step");
+        if (byInheritance(step)) {
+            return fromInheritance(step);
+        } else if (byAnnotation(step)) {
+            return fromAnnotation(step);
+        } else {
+            return fromDefault(step);
         }
     }
 
-
-    static final class ByAnnotationExtractor extends ExtractorWithSuccessorStrategy {
-        @Override
-        public boolean accept(final Step step) {
-            return step.getClass().isAnnotationPresent(Name.class);
-        }
-
-        @Override
-        public String doExtract(final Step step) {
-            return step.getClass().getAnnotation(Name.class).value();
-        }
+    private boolean byInheritance(final Step step) {
+        return step instanceof NamedStep;
     }
 
-    static final class DefaultExtractor implements ExtractorStrategy {
-        @Override
-        public ExtractorStrategy next(final ExtractorStrategy strategy) {
-            throw new UnsupportedOperationException("It's a default extractor. It should be used as last");
-        }
+    private String fromInheritance(final Step step) {
+        return ((NamedStep) step).name();
+    }
 
-        @Override
-        public String extract(final Step step) {
-            return step.getClass().getCanonicalName();
-        }
+    private boolean byAnnotation(final Step step) {
+        return step.getClass().isAnnotationPresent(Name.class);
+    }
+
+    private String fromAnnotation(final Step step) {
+        return step.getClass().getAnnotation(Name.class).value();
+    }
+
+    private String fromDefault(final Step step) {
+        return step.getClass().getCanonicalName();
     }
 }

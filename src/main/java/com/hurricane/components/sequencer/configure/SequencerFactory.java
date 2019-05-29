@@ -8,6 +8,7 @@ import com.hurricane.components.sequencer.runtime.Sequencer;
 import com.hurricane.components.sequencer.runtime.SequencerContract;
 import com.hurricane.components.sequencer.runtime.Step;
 import com.hurricane.components.sequencer.runtime.invoker.StepInvoker;
+import org.apache.commons.lang3.Validate;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ class SequencerFactory<T> {
     private final SequencerDefinitionValidator validator = new SequencerDefinitionValidator();
 
     public Sequencer<T> create(final SequencerBuildConfiguration<T> configuration) {
+        Validate.notNull(configuration, "Build configuration shouldn't be null");
         final SequencerContract definition = createDefinition(configuration);
         validateDefinition(definition);
         return createSequencer(definition);
